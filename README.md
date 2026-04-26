@@ -1,5 +1,226 @@
 # FinSight AI
 
+AI-powered financial intelligence platform with ML-based health scoring, waste detection, and goal prediction.
+
+---
+
+## 🚀 Quick Start
+
+### 1. Start Backend
+
+**Windows:**
+```bash
+RUN_ME.bat
+```
+
+**Linux/Mac:**
+```bash
+chmod +x RUN_ME.sh
+./RUN_ME.sh
+```
+
+### 2. Start Frontend
+
+Open a new terminal:
+```bash
+npm install
+npm run dev
+```
+
+### 3. Access Application
+
+- **Frontend:** http://localhost:5173
+- **Backend API:** http://localhost:8000
+- **API Docs:** http://localhost:8000/docs
+
+---
+
+## 📁 Project Structure
+
+```
+FinSight AI/
+├── main.py                          # FastAPI backend server
+├── security.py                      # Authentication & JWT
+├── finsight_models_production/      # ML models
+│   ├── health_model.py              # Financial health scoring
+│   ├── waste_model.py               # Subscription waste detection
+│   ├── goal_model.py                # Goal achievement prediction
+│   ├── cluster_model.py             # Behavioral clustering
+│   ├── behavioral_scoring.py        # Behavioral analysis
+│   ├── explainer.py                 # AI explanations (Gemini)
+│   └── data/                        # Training datasets
+├── src/                             # React frontend
+│   ├── pages/                       # 32 page components
+│   ├── components/                  # Reusable components
+│   ├── api.js                       # API client
+│   └── App.jsx                      # Main app & routing
+├── requirements.txt                 # Python dependencies
+├── package.json                     # Node.js dependencies
+├── RUN_ME.bat / RUN_ME.sh          # One-click startup
+└── test_everything.py               # System tests
+```
+
+---
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env` file (optional):
+```env
+JWT_SECRET=your_secret_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+Get Gemini API key: https://makersuite.google.com/app/apikey
+
+---
+
+## 🧪 Testing
+
+Run comprehensive tests:
+```bash
+python test_everything.py
+```
+
+---
+
+## 🔧 Manual Setup
+
+If you prefer manual setup:
+
+### Backend
+```bash
+# Create virtual environment
+python -m venv .venv
+
+# Activate
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/Mac
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start server
+python main.py
+```
+
+### Frontend
+```bash
+npm install
+npm run dev
+```
+
+---
+
+## 📊 Features
+
+- ✅ User Authentication (JWT)
+- ✅ Financial Health Scoring
+- ✅ Subscription Waste Analysis
+- ✅ Goal Achievement Prediction
+- ✅ Behavioral Clustering
+- ✅ AI-Powered Explanations
+- ✅ Interactive Dashboard
+- ✅ 32 Responsive Pages
+
+---
+
+## 🛠️ Tech Stack
+
+**Backend:**
+- FastAPI
+- SQLite
+- XGBoost
+- scikit-learn
+- Pandas
+- Google Gemini AI
+
+**Frontend:**
+- React 19
+- Vite
+- TailwindCSS
+- Framer Motion
+- React Router
+
+---
+
+## 🆘 Troubleshooting
+
+### Port Already in Use
+Edit `main.py` line 233:
+```python
+uvicorn.run(app, host="0.0.0.0", port=8001)  # Change port
+```
+
+### Module Not Found
+```bash
+# Activate virtual environment
+.venv\Scripts\activate  # Windows
+source .venv/bin/activate  # Linux/Mac
+
+# Reinstall dependencies
+pip install -r requirements.txt
+```
+
+### Database Issues
+Delete `finsight.db` and restart - it will be recreated automatically.
+
+---
+
+## 📝 API Endpoints
+
+### Authentication
+- `POST /auth/signup` - User registration
+- `POST /auth/login` - User login
+- `GET /user/me` - Get current user
+
+### Predictions (Authenticated)
+- `POST /predict/health` - Financial health score
+- `POST /predict/waste` - Subscription waste analysis
+- `POST /predict/goal` - Goal achievement prediction
+
+---
+
+## 🚀 Production Deployment
+
+### Backend
+```bash
+pip install gunicorn
+gunicorn main:app -w 4 -k uvicorn.workers.UvicornWorker
+```
+
+### Frontend
+```bash
+npm run build
+# Deploy dist/ folder to your hosting
+```
+
+### Environment
+Update `.env` with production values:
+```env
+JWT_SECRET=strong_random_secret_here
+GEMINI_API_KEY=production_api_key
+```
+
+---
+
+## 📄 License
+
+Private Project
+
+---
+
+## 🎯 Getting Started
+
+**Simplest way:**
+1. Run `RUN_ME.bat` (Windows) or `./RUN_ME.sh` (Linux/Mac)
+2. Open new terminal and run `npm run dev`
+3. Visit http://localhost:5173
+
+**That's it!** 🎉
+
+
 An advanced, data-driven financial intelligence platform leveraging Machine Learning to provide predictive analytics, behavioral clustering, and personalized financial modeling. 
 
 FinSight AI replaces static heuristic engines with robust AI classification and regression models, wrapped in a high-performance React frontend. It is designed to act as an institutional-grade advisory tool for tracking financial health, minimizing resource wastage, and mapping long-term wealth goals.

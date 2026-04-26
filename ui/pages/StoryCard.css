@@ -1,0 +1,6 @@
+﻿/* User requested grounding card */
+.scene-card {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(40px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}

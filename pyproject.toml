@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "finsight-ai"
+version = "1.0.0"
+description = "AI-powered financial intelligence platform"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["finsight_models_production"]
+
+[tool.pyright]
+include = ["src"]
+exclude = [
+    "**/node_modules",
+    "**/__pycache__",
+    "**/dist",
+    "**/build",
+    ".venv",
+    "ui",
+    "**/__pyrefly_virtual__/**",
+    "**/vertical-cache/**"
+]
+venvPath = "."
+venv = ".venv"
+pythonVersion = "3.10"
+typeCheckingMode = "basic"
+reportMissingImports = false
+reportMissingModuleSource = false
+extraPaths = ["src"]
+executionEnvironments = [
+  { root = "src" }
+]
+
+
+[tool.pyrefly]
+project-root = "."
+import-roots = ["src"]
+extra-paths = ["src"]
+python-version = "3.10"
+include = ["src/main.py", "src/security.py", "src/finsight_models_production/**/*.py"]
+exclude = ["**/__pyrefly_virtual__/**", "**/__pycache__/**"]
+
+
