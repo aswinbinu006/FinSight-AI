@@ -1,0 +1,10 @@
+{
+  "extraPaths": ["finsight_models_production"],
+  "executionEnvironments": [
+    {
+      "root": "."
+    }
+  ],
+  "reportMissingImports": "none",
+  "reportMissingModuleSource": "none"
+}

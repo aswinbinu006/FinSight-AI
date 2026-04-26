@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-container": "#e9efee",
+                        "tertiary-fixed": "#d3e4fe",
+                        "secondary-fixed": "#dae2fd",
+                        "outline": "#6c7a77",
+                        "on-error-container": "#93000a",
+                        "surface-container-low": "#eff5f4",
+                        "surface-container-highest": "#dee4e3",
+                        "primary-fixed-dim": "#4fdbc8",
+                        "on-tertiary-container": "#2b3b50",
+                        "secondary": "#565e74",
+                        "on-tertiary-fixed": "#0b1c30",
+                        "on-secondary": "#ffffff",
+                        "on-surface-variant": "#3c4947",
+                        "surface-tint": "#006b5f",
+                        "primary-container": "#14b8a6",
+                        "surface-bright": "#f5fbfa",
+                        "on-primary": "#ffffff",
+                        "surface": "#f5fbfa",
+                        "on-secondary-fixed": "#131b2e",
+                        "on-tertiary": "#ffffff",
+                        "on-background": "#171d1c",
+                        "tertiary-container": "#95a5be",
+                        "on-primary-container": "#00423b",
+                        "inverse-surface": "#2b3231",
+                        "tertiary": "#505f76",
+                        "primary": "#006b5f",
+                        "on-secondary-container": "#5c647a",
+                        "primary-fixed": "#71f8e4",
+                        "inverse-primary": "#4fdbc8",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#00201c",
+                        "on-secondary-fixed-variant": "#3f465c",
+                        "on-primary-fixed-variant": "#005048",
+                        "surface-dim": "#d5dbda",
+                        "secondary-container": "#dae2fd",
+                        "surface-container-lowest": "#ffffff",
+                        "tertiary-fixed-dim": "#b7c8e1",
+                        "secondary-fixed-dim": "#bec6e0",
+                        "surface-container-high": "#e3e9e8",
+                        "surface-variant": "#dee4e3",
+                        "background": "#f5fbfa",
+                        "outline-variant": "#bbcac6",
+                        "on-surface": "#171d1c",
+                        "on-tertiary-fixed-variant": "#38485d",
+                        "inverse-on-surface": "#ecf2f1",
+                        "on-error": "#ffffff",
+                        "error": "#ba1a1a"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3 { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .intelligence-ray {
+            position: relative;
+        }
+        .intelligence-ray::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 15%;
+            bottom: 15%;
+            width: 2px;
+            background-color: #14b8a6;
+            border-radius: 2px;
+        }
+        aside { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .peer:checked ~ aside { width: 220px; }
+        .nav-label { opacity: 0; width: 0; overflow: hidden; transition: all 0.2s ease; white-space: nowrap; }
+        .peer:checked ~ aside .nav-label { opacity: 1; width: auto; margin-left: 12px; max-width: 140px; text-overflow: ellipsis; }
+        .peer:checked ~ aside .expand-icon { transform: rotate(180deg); }
+        .peer:checked ~ aside .nav-item { padding-left: 1rem; justify-content: flex-start; width: 88%; }
+        .nav-item.active { background-color: #0d9488; color: white; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2); }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-[#F2F8F7] to-[#E6F3F1] text-on-background min-h-screen flex font-body">
+<!-- SideNavBar: Rail Implementation -->
+<input class="hidden peer" id="sidebar-toggle" type="checkbox"/>
+<aside class="fixed left-4 top-4 bottom-4 w-20 rounded-3xl z-50 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.03),0_2px_4px_rgba(15,23,42,0.02)] flex flex-col items-center py-8 justify-between overflow-hidden transition-all duration-300 bg-surface-container/95">
+<!-- Brand Logo & Toggle -->
+<div class="flex flex-col items-center gap-4 w-full">
+<div class="flex flex-col items-center gap-1">
+<div class="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">architecture</span>
+</div>
+<span class="text-teal-800 font-semibold tracking-tighter text-[10px] mt-2 uppercase italic">Architect</span>
+</div>
+<label class="w-10 h-10 flex items-center justify-center text-teal-600/60 hover:text-teal-800 bg-teal-100/30 rounded-xl cursor-pointer transition-colors" for="sidebar-toggle" title="Toggle Sidebar">
+<span class="material-symbols-outlined expand-icon transition-transform duration-300">chevron_right</span>
+</label>
+</div>
+<!-- Navigation Tabs -->
+<nav class="flex flex-col gap-3 items-center w-full">
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300 group" title="Dashboard">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="nav-label font-medium text-sm">Dashboard</span>
+</button>
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300" title="Financial Health">
+<span class="material-symbols-outlined">monitor_heart</span>
+<span class="nav-label font-medium text-sm">Financial Health</span>
+</button>
+<button class="nav-item active w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-300 group relative" title="Waste Recovery">
+<span class="material-symbols-outlined">delete_outline</span>
+<span class="nav-label font-medium text-sm">Waste Recovery</span>
+</button>
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300" title="Goal Intelligence">
+<span class="material-symbols-outlined">ads_click</span>
+<span class="nav-label font-medium text-sm">Goal Intelligence</span>
+</button>
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300" title="AI Co-Pilot">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="nav-label font-medium text-sm">AI Co-Pilot</span>
+</button>
+</nav>
+<!-- Footer Actions -->
+<div class="flex flex-col gap-2 items-center w-full">
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300" title="Settings">
+<span class="material-symbols-outlined">settings</span>
+<span class="nav-label font-medium text-sm">Settings</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-24 p-8 transition-all duration-300 flex flex-col">
+<!-- TopNavBar -->
+<header class="w-full h-16 flex justify-between items-center mb-8">
+<div class="flex items-center gap-4">
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-surface-container-highest overflow-hidden ml-2 shadow-sm border border-outline-variant/20">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkwsQQmnSZb7KCWk7jycz5bErIpotJIEl8vvU0KuWhZXWWtrsz-UcyZM36ayMhnAmT6FFW-wHX1S5wjGrFDgru0RDk__pHEmST9wn-eBLyXu4t2adSw_aQmm18zFGm8ZDQdzotZRH8D8Hn4iWLvtfgAqYEZ5SrNL7LDQms9-GUMe-dlbT8GEdQHx3uiAOMXoSq8x_vf9XE5DcTMcw3RvlckR0iqBaqFG84VrqVnMiAU1JCHHnDwV3W6b_2NwMVbQPND4wlzYgw7hBK"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Centered Content Card -->
+<div class="flex-1 flex items-center justify-center pb-16">
+<div class="bg-surface-container-lowest p-12 rounded-[16px] shadow-[0_4px_12px_rgba(15,23,42,0.03)] border border-outline-variant/10 max-w-2xl w-full relative overflow-hidden">
+<!-- Background Decorative Element -->
+<div class="absolute right-0 top-0 w-64 h-64 opacity-5 pointer-events-none">
+<svg viewbox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+<circle cx="150" cy="50" fill="#14b8a6" r="100"></circle>
+</svg>
+</div>
+<div class="relative z-10 flex flex-col items-center text-center">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4">
+                    Waste Recovery
+                </span>
+<h1 class="text-3xl font-bold tracking-tight text-on-surface mb-6 leading-tight">
+                    Identify and reduce unnecessary expenses
+                </h1>
+<p class="text-sm text-on-surface-variant max-w-md mb-10 leading-relaxed">
+                    Add your subscriptions and see where you might be wasting money. Our AI-driven intelligence maps your recurring costs effortlessly.
+                </p>
+<div class="w-full max-w-sm flex flex-col gap-4 mb-12">
+<div class="intelligence-ray bg-surface-container-low/50 p-4 rounded-xl flex items-center gap-4 text-left transition-all hover:translate-x-1 border border-outline-variant/5">
+<span class="material-symbols-outlined text-primary" data-icon="visibility">visibility</span>
+<span class="text-sm font-semibold text-on-surface">Clear view of your subscriptions</span>
+</div>
+<div class="intelligence-ray bg-surface-container-low/50 p-4 rounded-xl flex items-center gap-4 text-left transition-all hover:translate-x-1 border border-outline-variant/5">
+<span class="material-symbols-outlined text-primary" data-icon="rule">rule</span>
+<span class="text-sm font-semibold text-on-surface">Identify unnecessary expenses</span>
+</div>
+<div class="intelligence-ray bg-surface-container-low/50 p-4 rounded-xl flex items-center gap-4 text-left transition-all hover:translate-x-1 border border-outline-variant/5">
+<span class="material-symbols-outlined text-primary" data-icon="savings">savings</span>
+<span class="text-sm font-semibold text-on-surface">See how much you can save</span>
+</div>
+</div>
+<div class="flex flex-col items-center gap-3">
+<button class="px-12 py-4 bg-gradient-to-r from-primary to-primary-container text-white font-bold rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] transition-all active:scale-95 flex items-center gap-2">
+                        Add Subscriptions
+                    </button>
+<span class="text-[11px] font-medium text-on-surface-variant italic">
+                        Takes less than a minute
+                    </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Decoration -->
+</main>
+</body></html>

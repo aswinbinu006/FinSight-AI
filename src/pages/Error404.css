@@ -1,0 +1,11 @@
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .bg-gradient-soft-teal {
+            background: linear-gradient(135deg, #F2F8F7 0%, #E6F3F1 100%);
+        }
+        .ambient-shadow {
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03), 0 2px 4px rgba(15, 23, 42, 0.02);
+        }
+    

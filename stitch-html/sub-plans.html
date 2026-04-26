@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FinSight AI - Subscription Plans</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container": "#e9efee",
+              "tertiary-fixed": "#d3e4fe",
+              "secondary-fixed": "#dae2fd",
+              "outline": "#6c7a77",
+              "on-error-container": "#93000a",
+              "surface-container-low": "#eff5f4",
+              "surface-container-highest": "#dee4e3",
+              "primary-fixed-dim": "#4fdbc8",
+              "on-tertiary-container": "#2b3b50",
+              "secondary": "#565e74",
+              "on-tertiary-fixed": "#0b1c30",
+              "on-secondary": "#ffffff",
+              "on-surface-variant": "#3c4947",
+              "surface-tint": "#006b5f",
+              "primary-container": "#14b8a6",
+              "surface-bright": "#f5fbfa",
+              "on-primary": "#ffffff",
+              "surface": "#f5fbfa",
+              "on-secondary-fixed": "#131b2e",
+              "on-tertiary": "#ffffff",
+              "on-background": "#171d1c",
+              "tertiary-container": "#95a5be",
+              "on-primary-container": "#00423b",
+              "inverse-surface": "#2b3231",
+              "tertiary": "#505f76",
+              "primary": "#006b5f",
+              "on-secondary-container": "#5c647a",
+              "primary-fixed": "#71f8e4",
+              "inverse-primary": "#4fdbc8",
+              "error-container": "#ffdad6",
+              "on-primary-fixed": "#00201c",
+              "on-secondary-fixed-variant": "#3f465c",
+              "on-primary-fixed-variant": "#005048",
+              "surface-dim": "#d5dbda",
+              "secondary-container": "#dae2fd",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed-dim": "#b7c8e1",
+              "secondary-fixed-dim": "#bec6e0",
+              "surface-container-high": "#e3e9e8",
+              "surface-variant": "#dee4e3",
+              "background": "#f5fbfa",
+              "outline-variant": "#bbcac6",
+              "on-surface": "#171d1c",
+              "on-tertiary-fixed-variant": "#38485d",
+              "inverse-on-surface": "#ecf2f1",
+              "on-error": "#ffffff",
+              "error": "#ba1a1a"
+            },
+            fontFamily: {
+              "headline": ["Inter", "sans-serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        aside { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .peer:checked ~ aside { width: 220px; }
+        .peer:checked ~ main { margin-left: 240px; }
+        .nav-label { opacity: 0; width: 0; overflow: hidden; transition: all 0.2s ease; white-space: nowrap; }
+        .peer:checked ~ aside .nav-label { opacity: 1; width: auto; margin-left: 12px; max-width: 140px; text-overflow: ellipsis; }
+        .peer:checked ~ aside .expand-icon { transform: rotate(180deg); }
+        .peer:checked ~ aside .nav-item { padding-left: 1rem; justify-content: flex-start; width: 88%; }
+        .nav-item.active { background-color: #0d9488; color: white; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2); }
+        .peer:checked ~ aside .nav-item.active { width: 90%; }
+        .bg-institutional-gradient {
+            background: linear-gradient(180deg, #F5FBFA 0%, #E9EFEE 100%);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-background min-h-screen flex font-body">
+<!-- SideNavBar: Rail Implementation -->
+<input class="hidden peer" id="sidebar-toggle" type="checkbox"/>
+<aside class="fixed left-4 top-4 bottom-4 w-20 rounded-3xl z-50 flex flex-col items-center py-8 justify-between overflow-hidden transition-all duration-300 bg-surface-container/95 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.03),0_2px_4px_rgba(15,23,42,0.02)]">
+<!-- Brand Logo & Toggle -->
+<div class="flex flex-col items-center gap-4 w-full">
+<div class="flex flex-col items-center gap-1">
+<div class="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">architecture</span>
+</div>
+<span class="text-teal-800 font-semibold tracking-tighter text-[10px] mt-2 uppercase italic">Architect</span>
+</div>
+<label class="w-10 h-10 flex items-center justify-center text-teal-600/60 hover:text-teal-800 bg-teal-100/30 rounded-xl cursor-pointer transition-colors" for="sidebar-toggle" title="Toggle Sidebar">
+<span class="material-symbols-outlined expand-icon transition-transform duration-300">chevron_right</span>
+</label>
+</div>
+<!-- Navigation Tabs -->
+<nav class="flex flex-col gap-3 items-center w-full">
+<button class="nav-item w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-300 group relative text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50" title="Dashboard">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="nav-label font-medium text-sm">Dashboard</span>
+</button>
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300 active:scale-95" title="Financial Health">
+<span class="material-symbols-outlined">monitor_heart</span>
+<span class="nav-label font-medium text-sm">Financial Health</span>
+</button>
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300 active:scale-95" title="Waste Recovery">
+<span class="material-symbols-outlined">delete_outline</span>
+<span class="nav-label font-medium text-sm">Waste Recovery</span>
+</button>
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300 active:scale-95" title="Goal Intelligence">
+<span class="material-symbols-outlined">ads_click</span>
+<span class="nav-label font-medium text-sm">Goal Intelligence</span>
+</button>
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300 active:scale-95" title="AI Co-Pilot">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="nav-label font-medium text-sm">AI Co-Pilot</span>
+</button>
+<button class="nav-item active w-12 h-12 flex items-center justify-center rounded-2xl transition-all duration-300 active:scale-95" title="Subscription">
+<span class="material-symbols-outlined">payments</span>
+<span class="nav-label font-medium text-sm">Subscription</span>
+</button>
+</nav>
+<!-- Footer Actions -->
+<div class="flex flex-col gap-2 items-center w-full">
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300" title="Settings">
+<span class="material-symbols-outlined">settings</span>
+<span class="nav-label font-medium text-sm">Settings</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-24 p-8 transition-all duration-300 min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="w-full h-16 flex justify-end items-center mb-12">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-surface-container-highest overflow-hidden ml-2 shadow-sm">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkwsQQmnSZb7KCWk7jycz5bErIpotJIEl8vvU0KuWhZXWWtrsz-UcyZM36ayMhnAmT6FFW-wHX1S5wjGrFDgru0RDk__pHEmST9wn-eBLyXu4t2adSw_aQmm18zFGm8ZDQdzotZRH8D8Hn4iWLvtfgAqYEZ5SrNL7LDQms9-GUMe-dlbT8GEdQHx3uiAOMXoSq8x_vf9XE5DcTMcw3RvlckR0iqBaqFG84VrqVnMiAU1JCHHnDwV3W6b_2NwMVbQPND4wlzYgw7hBK"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="flex-grow flex flex-col items-center">
+<div class="max-w-4xl w-full text-center mb-16">
+<h2 class="text-4xl md:text-5xl font-extrabold text-on-surface tracking-tight mb-4">Choose your plan</h2>
+<p class="text-lg text-on-surface-variant max-w-lg mx-auto">Unlock smarter financial decisions with our institutional-grade intelligence tools.</p>
+</div>
+<div class="max-w-5xl w-full grid md:grid-cols-2 gap-10 items-stretch px-4">
+<!-- FREE PLAN -->
+<div class="bg-surface-container-lowest rounded-2xl p-10 flex flex-col border border-outline-variant/10 shadow-[0_4px_24px_rgba(15,23,42,0.03)] transition-all duration-300 hover:shadow-md">
+<div class="mb-10">
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-3 block">Entry Tier</span>
+<h3 class="text-3xl font-bold text-on-surface mb-2">Free</h3>
+<div class="flex items-baseline gap-1">
+<span class="text-5xl font-black text-on-surface">₹0</span>
+</div>
+</div>
+<div class="flex-grow space-y-6 mb-12">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="check_circle">check_circle</span>
+<span class="text-on-surface-variant text-sm font-medium">Financial Health Score (full)</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="check_circle">check_circle</span>
+<span class="text-on-surface-variant text-sm font-medium">Waste labels only</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="check_circle">check_circle</span>
+<span class="text-on-surface-variant text-sm font-medium">1 Goal (no prediction)</span>
+</div>
+<div class="flex items-start gap-3 opacity-30">
+<span class="material-symbols-outlined text-on-surface-variant text-xl" data-icon="lock">lock</span>
+<span class="text-on-surface-variant text-sm font-medium">AI Co-Pilot (locked)</span>
+</div>
+</div>
+<button class="w-full py-4 px-6 rounded-xl bg-surface-container-high text-on-surface font-bold text-sm transition-colors hover:bg-surface-dim uppercase tracking-wider">
+                    Current Plan
+                </button>
+</div>
+<!-- PRO PLAN -->
+<div class="relative bg-surface-container-lowest rounded-2xl p-10 flex flex-col border-2 border-primary/20 shadow-[0_24px_48px_-12px_rgba(0,107,95,0.15)] transform md:scale-105 z-10">
+<div class="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white px-4 py-1.5 rounded-full shadow-lg">
+<span class="text-[10px] font-bold uppercase tracking-widest">Recommended</span>
+</div>
+<div class="mb-10">
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] text-primary mb-3 block">Institutional Tier</span>
+<h3 class="text-3xl font-bold text-on-surface mb-2">Pro</h3>
+<div class="flex items-baseline gap-1">
+<span class="text-5xl font-black text-on-surface">₹999</span>
+<span class="text-on-surface-variant font-semibold text-sm">/month</span>
+</div>
+</div>
+<div class="flex-grow space-y-6 mb-12">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-on-surface font-semibold text-sm">Full Waste Recovery (actions + graph)</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-on-surface font-semibold text-sm">Unlimited goals + prediction</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-on-surface font-semibold text-sm">AI Co-Pilot (full access)</span>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-primary text-xl" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+<span class="text-on-surface font-semibold text-sm">Priority Institutional Support</span>
+</div>
+</div>
+<button class="w-full py-5 px-6 rounded-xl bg-gradient-to-r from-primary to-primary-container text-white font-black text-sm shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all duration-300 uppercase tracking-widest">
+                    Upgrade to Pro
+                </button>
+</div>
+</div>
+<!-- Institutional Partners Section -->
+<div class="max-w-4xl w-full mt-32 text-center pb-20">
+<div class="flex items-center justify-center gap-6 mb-8 opacity-20">
+<div class="h-[1px] w-12 bg-on-surface-variant"></div>
+<p class="text-[10px] uppercase tracking-[0.4em] font-bold text-on-surface-variant">Secure Protocols</p>
+<div class="h-[1px] w-12 bg-on-surface-variant"></div>
+</div>
+<div class="flex flex-col md:flex-row justify-center items-center gap-12 md:gap-20">
+<span class="text-sm font-bold tracking-[0.25em] text-on-surface-variant/40">COMING SOON: GLOBAL INSTITUTIONAL PARTNERS</span>
+<span class="hidden md:block w-1 h-1 rounded-full bg-on-surface-variant/20"></span>
+<span class="text-sm font-bold tracking-[0.25em] text-on-surface-variant/40">PRIVATE WEALTH PROTOCOLS</span>
+</div>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full py-12 mt-auto border-t border-outline-variant/10">
+<div class="max-w-7xl mx-auto px-8 flex flex-col md:flex-row justify-between items-center gap-6">
+<div class="text-[10px] uppercase tracking-[0.2em] font-bold text-on-surface-variant/60">
+                © 2024 FINSIGHT AI. INSTITUTIONAL FINANCIAL INTELLIGENCE.
+            </div>
+<div class="flex gap-8">
+<a class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant/60 hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant/60 hover:text-primary transition-colors" href="#">Terms</a>
+<a class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant/60 hover:text-primary transition-colors" href="#">Security</a>
+<a class="text-[10px] uppercase tracking-widest font-bold text-on-surface-variant/60 hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+</main>
+</body></html>

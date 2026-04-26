@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Onboarding Step 3: Savings Habit</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-primary": "#ffffff",
+              "outline-variant": "#bbcac6",
+              "secondary-fixed-dim": "#bec6e0",
+              "on-error-container": "#93000a",
+              "secondary-fixed": "#dae2fd",
+              "on-secondary-fixed-variant": "#3f465c",
+              "tertiary-fixed-dim": "#b7c8e1",
+              "on-tertiary-fixed-variant": "#38485d",
+              "tertiary-fixed": "#d3e4fe",
+              "surface-container-lowest": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "surface-container": "#e9efee",
+              "surface": "#f5fbfa",
+              "on-primary-container": "#00423b",
+              "on-error": "#ffffff",
+              "inverse-surface": "#2b3231",
+              "surface-bright": "#f5fbfa",
+              "on-secondary-fixed": "#131b2e",
+              "on-tertiary-container": "#2b3b50",
+              "surface-variant": "#dee4e3",
+              "tertiary": "#505f76",
+              "on-primary-fixed-variant": "#005048",
+              "surface-container-highest": "#dee4e3",
+              "primary-fixed": "#71f8e4",
+              "inverse-primary": "#4fdbc8",
+              "secondary-container": "#dae2fd",
+              "secondary": "#565e74",
+              "on-tertiary-fixed": "#0b1c30",
+              "primary-container": "#14b8a6",
+              "surface-container-low": "#eff5f4",
+              "surface-container-high": "#e3e9e8",
+              "outline": "#6c7a77",
+              "on-surface-variant": "#3c4947",
+              "surface-tint": "#006b5f",
+              "error": "#ba1a1a",
+              "background": "#f5fbfa",
+              "primary-fixed-dim": "#4fdbc8",
+              "on-surface": "#171d1c",
+              "on-secondary": "#ffffff",
+              "on-primary-fixed": "#00201c",
+              "primary": "#006b5f",
+              "surface-dim": "#d5dbda",
+              "on-background": "#171d1c",
+              "inverse-on-surface": "#ecf2f1",
+              "tertiary-container": "#95a5be",
+              "on-secondary-container": "#5c647a",
+              "error-container": "#ffdad6",
+              "accent-surface": "#F0F9F8"
+            },
+            fontFamily: {
+              "headline": ["Inter"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .active-ring {
+            box-shadow: 0 0 0 2px #006b5f;
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f5fbfa;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #bbcac6;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6c7a77;
+        }
+    </style>
+</head>
+<body class="bg-background font-body text-on-surface min-h-screen flex flex-col selection:bg-primary/20">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky bg-background/80 backdrop-blur-md z-50">
+<div class="flex justify-between items-center px-6 py-4 max-w-xl mx-auto">
+<div class="text-base font-semibold text-on-surface font-headline tracking-tight">Onboarding</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-primary hover:bg-surface-container-low p-1.5 rounded-full transition-all active:scale-95" data-icon="help">help</button>
+</div>
+</div>
+<div class="bg-outline-variant/20 h-px max-w-xl mx-auto"></div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow flex flex-col items-center px-6 max-w-xl mx-auto w-full pt-4 pb-12 md:pt-6 md:pb-16">
+<!-- Progress Indicator -->
+<div class="w-full mb-6">
+<div class="flex justify-end mb-2.5">
+<span class="text-[0.625rem] font-bold uppercase tracking-[0.15em] text-primary">Step 3 of 4</span>
+</div>
+<div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[75%] rounded-full transition-all duration-700 ease-out shadow-[0_0_8px_rgba(0,107,95,0.3)]"></div>
+</div>
+</div>
+<!-- Question Section & Option Cards Container -->
+<div class="w-full">
+<div class="text-center mb-6">
+<h1 class="text-2xl md:text-3xl font-semibold tracking-tight text-on-surface mb-4 leading-snug">Do you save money regularly?</h1>
+<p class="text-on-surface-variant text-sm md:text-base max-w-md mx-auto leading-relaxed">This helps us tailor your institutional-grade financial projections and wealth optimization strategies.</p>
+</div>
+<!-- Option Cards Area - Subtle Teal Tint -->
+<div class="bg-accent-surface rounded-2xl p-5 md:p-6 space-y-3 border border-primary/5">
+<!-- Option 1 -->
+<button class="group relative flex items-center justify-between w-full p-4 bg-surface-container-lowest hover:bg-surface-container-low border-transparent border-2 hover:border-primary/20 rounded-xl transition-all duration-300 text-left shadow-[0_2px_8px_rgba(15,23,42,0.02)] active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-primary/20">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-xl" style="font-variation-settings: 'FILL' 1;">verified</span>
+</div>
+<div>
+<h3 class="text-base font-semibold text-on-surface">Yes, consistently</h3>
+<p class="text-xs text-on-surface-variant">I have a structured monthly savings plan.</p>
+</div>
+</div>
+<div class="w-5 h-5 rounded-full border-2 border-outline-variant group-hover:border-primary flex items-center justify-center transition-colors">
+<div class="w-2 h-2 rounded-full bg-primary scale-0 group-focus:scale-100 transition-transform"></div>
+</div>
+</button>
+<!-- Option 2 -->
+<button class="group relative flex items-center justify-between w-full p-4 bg-surface-container-lowest hover:bg-surface-container-low border-transparent border-2 hover:border-primary/20 rounded-xl transition-all duration-300 text-left shadow-[0_2px_8px_rgba(15,23,42,0.02)] active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-primary/20">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-secondary-container/30 flex items-center justify-center text-secondary group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-xl">calendar_today</span>
+</div>
+<div>
+<h3 class="text-base font-semibold text-on-surface">Occasionally</h3>
+<p class="text-xs text-on-surface-variant">I save when I have extra funds available.</p>
+</div>
+</div>
+<div class="w-5 h-5 rounded-full border-2 border-outline-variant group-hover:border-primary flex items-center justify-center transition-colors">
+<div class="w-2 h-2 rounded-full bg-primary scale-0 group-focus:scale-100 transition-transform"></div>
+</div>
+</button>
+<!-- Option 3 -->
+<button class="group relative flex items-center justify-between w-full p-4 bg-surface-container-lowest hover:bg-surface-container-low border-transparent border-2 hover:border-primary/20 rounded-xl transition-all duration-300 text-left shadow-[0_2px_8px_rgba(15,23,42,0.02)] active:scale-[0.99] focus:outline-none focus:ring-2 focus:ring-primary/20">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded-lg bg-surface-container-highest flex items-center justify-center text-on-surface-variant group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-xl">history</span>
+</div>
+<div>
+<h3 class="text-base font-semibold text-on-surface">Rarely</h3>
+<p class="text-xs text-on-surface-variant">I find it difficult to save at this moment.</p>
+</div>
+</div>
+<div class="w-5 h-5 rounded-full border-2 border-outline-variant group-hover:border-primary flex items-center justify-center transition-colors">
+<div class="w-2 h-2 rounded-full bg-primary scale-0 group-focus:scale-100 transition-transform"></div>
+</div>
+</button>
+</div>
+</div>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-lg border-t border-outline-variant/10 z-50">
+<div class="max-w-xl mx-auto w-full flex justify-between items-center py-4 px-6">
+<button class="flex items-center justify-center text-on-surface-variant px-4 py-2 font-semibold text-[0.625rem] tracking-widest uppercase hover:text-primary transition-colors active:translate-y-0.5">
+<span class="material-symbols-outlined mr-2 text-base" data-icon="arrow_back">arrow_back</span>
+            Back
+        </button>
+<button class="flex items-center justify-center bg-gradient-to-r from-[#006B5F] to-[#14B8A6] text-white rounded-full px-8 py-2.5 shadow-md shadow-primary/20 font-semibold text-[0.625rem] tracking-widest uppercase hover:brightness-110 transition-all active:scale-[0.98]">
+            Continue
+            <span class="material-symbols-outlined ml-2 text-base" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+</nav>
+</body></html>

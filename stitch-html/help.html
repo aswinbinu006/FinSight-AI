@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Help &amp; Insights | FinSight AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-container": "#e9efee",
+              "tertiary-fixed": "#d3e4fe",
+              "secondary-fixed": "#dae2fd",
+              "outline": "#6c7a77",
+              "on-error-container": "#93000a",
+              "surface-container-low": "#eff5f4",
+              "surface-container-highest": "#dee4e3",
+              "primary-fixed-dim": "#4fdbc8",
+              "on-tertiary-container": "#2b3b50",
+              "secondary": "#565e74",
+              "on-tertiary-fixed": "#0b1c30",
+              "on-secondary": "#ffffff",
+              "on-surface-variant": "#3c4947",
+              "surface-tint": "#006b5f",
+              "primary-container": "#14b8a6",
+              "surface-bright": "#f5fbfa",
+              "on-primary": "#ffffff",
+              "surface": "#f5fbfa",
+              "on-secondary-fixed": "#131b2e",
+              "on-tertiary": "#ffffff",
+              "on-background": "#171d1c",
+              "tertiary-container": "#95a5be",
+              "on-primary-container": "#00423b",
+              "inverse-surface": "#2b3231",
+              "tertiary": "#505f76",
+              "primary": "#006b5f",
+              "on-secondary-container": "#5c647a",
+              "primary-fixed": "#71f8e4",
+              "inverse-primary": "#4fdbc8",
+              "error-container": "#ffdad6",
+              "on-primary-fixed": "#00201c",
+              "on-secondary-fixed-variant": "#3f465c",
+              "on-primary-fixed-variant": "#005048",
+              "surface-dim": "#d5dbda",
+              "secondary-container": "#dae2fd",
+              "surface-container-lowest": "#ffffff",
+              "tertiary-fixed-dim": "#b7c8e1",
+              "secondary-fixed-dim": "#bec6e0",
+              "surface-container-high": "#e3e9e8",
+              "surface-variant": "#dee4e3",
+              "background": "#f5fbfa",
+              "outline-variant": "#bbcac6",
+              "on-surface": "#171d1c",
+              "on-tertiary-fixed-variant": "#38485d",
+              "inverse-on-surface": "#ecf2f1",
+              "on-error": "#ffffff",
+              "error": "#ba1a1a"
+            },
+            fontFamily: {
+              "headline": ["Inter", "sans-serif"],
+              "body": ["Inter", "sans-serif"],
+              "label": ["Inter", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .intelligence-ray {
+            position: relative;
+        }
+        .intelligence-ray::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 15%;
+            bottom: 15%;
+            width: 2px;
+            background-color: #14b8a6;
+            border-radius: 2px;
+        }
+        aside { transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .peer:checked ~ aside { width: 220px; }
+        .peer:checked ~ main { margin-left: 240px; }
+        .nav-label { opacity: 0; width: 0; overflow: hidden; transition: all 0.2s ease; white-space: nowrap; }
+        .peer:checked ~ aside .nav-label { opacity: 1; width: auto; margin-left: 12px; max-width: 140px; text-overflow: ellipsis; }
+        .peer:checked ~ aside .expand-icon { transform: rotate(180deg); }
+        .peer:checked ~ aside .nav-item { padding-left: 1rem; justify-content: flex-start; width: 88%; }
+        .nav-item.active { background-color: #0d9488; color: white; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2); }
+        .peer:checked ~ aside .nav-item.active { width: 90%; }
+    </style>
+</head>
+<body class="bg-surface text-on-background min-h-screen flex font-body">
+<!-- SideNavBar: Rail Implementation -->
+<input class="hidden peer" id="sidebar-toggle" type="checkbox"/>
+<aside class="fixed left-4 top-4 bottom-4 w-20 rounded-3xl z-50 dark:bg-teal-950/80 backdrop-blur-xl shadow-[0_4px_12px_rgba(15,23,42,0.03),0_2px_4px_rgba(15,23,42,0.02)] flex flex-col items-center py-8 justify-between overflow-hidden transition-all duration-300 bg-surface-container/95">
+<!-- Brand Branding & Toggle -->
+<div class="flex flex-col items-center gap-4 w-full">
+<!-- Goal Architect Logo moved to top of rail -->
+<div class="flex flex-col items-center gap-1 mb-2">
+<div class="w-12 h-12 rounded-2xl bg-primary flex items-center justify-center text-white shadow-lg">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">architecture</span>
+</div>
+<span class="text-teal-800 font-semibold tracking-tighter text-[10px] uppercase italic">Architect</span>
+</div>
+<!-- Functionally positioned Toggle Arrow -->
+<label class="w-10 h-10 flex items-center justify-center text-teal-600/60 hover:text-teal-800 bg-teal-100/30 rounded-xl cursor-pointer transition-colors" for="sidebar-toggle" title="Toggle Sidebar">
+<span class="material-symbols-outlined expand-icon transition-transform duration-300">chevron_right</span>
+</label>
+</div>
+<!-- Navigation Tabs -->
+<nav class="flex flex-col gap-3 items-center w-full">
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300 active:scale-95" title="Dashboard">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="nav-label font-medium text-sm">Dashboard</span>
+</button>
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300 active:scale-95" title="Health">
+<span class="material-symbols-outlined">monitor_heart</span>
+<span class="nav-label font-medium text-sm">Health</span>
+</button>
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300 active:scale-95" title="Waste">
+<span class="material-symbols-outlined">delete_outline</span>
+<span class="nav-label font-medium text-sm">Waste</span>
+</button>
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300 active:scale-95" title="Goals">
+<span class="material-symbols-outlined">ads_click</span>
+<span class="nav-label font-medium text-sm">Goals</span>
+</button>
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300 active:scale-95" title="AI Co-Pilot">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<span class="nav-label font-medium text-sm">AI Co-Pilot</span>
+</button>
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300 active:scale-95" title="Subscription">
+<span class="material-symbols-outlined">payments</span>
+<span class="nav-label font-medium text-sm">Subscription</span>
+</button>
+</nav>
+<!-- Footer Actions -->
+<div class="flex flex-col gap-2 items-center w-full">
+<button class="nav-item w-12 h-12 flex items-center justify-center text-teal-600/60 hover:text-teal-800 hover:bg-teal-100/50 rounded-2xl transition-all duration-300" title="Settings">
+<span class="material-symbols-outlined">settings</span>
+<span class="nav-label font-medium text-sm">Settings</span>
+</button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-24 p-8 transition-all duration-300">
+<!-- TopNavBar Cluster -->
+<header class="w-full h-16 flex justify-between items-center mb-12">
+<!-- Branding removed from header -->
+<div></div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-2 bg-primary text-white rounded-lg transition-colors shadow-sm">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">help_outline</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-surface-container-highest overflow-hidden ml-2 shadow-sm border border-outline-variant/20">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDkwsQQmnSZb7KCWk7jycz5bErIpotJIEl8vvU0KuWhZXWWtrsz-UcyZM36ayMhnAmT6FFW-wHX1S5wjGrFDgru0RDk__pHEmST9wn-eBLyXu4t2adSw_aQmm18zFGm8ZDQdzotZRH8D8Hn4iWLvtfgAqYEZ5SrNL7LDQms9-GUMe-dlbT8GEdQHx3uiAOMXoSq8x_vf9XE5DcTMcw3RvlckR0iqBaqFG84VrqVnMiAU1JCHHnDwV3W6b_2NwMVbQPND4wlzYgw7hBK"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Page Content Container -->
+<div class="max-w-7xl mx-auto space-y-12">
+<!-- Header Section -->
+<section class="max-w-2xl">
+<h2 class="text-4xl font-bold tracking-tight text-on-surface mb-3">Help &amp; Insights</h2>
+<p class="text-on-surface-variant text-lg leading-relaxed">Understand how FinSight AI works and how your insights are generated.</p>
+</section>
+<!-- Section 1: How It Works -->
+<section>
+<div class="flex items-center gap-2 mb-6">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary-container/20 px-2 py-1 rounded">Methodology</span>
+<h3 class="text-xl font-bold text-on-surface">How It Works</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-surface-container-lowest p-8 rounded-2xl intelligence-ray shadow-[0_4px_12px_rgba(15,23,42,0.03)] border border-outline-variant/10 group hover:translate-y-[-2px] transition-all duration-300">
+<div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">monitor_heart</span>
+</div>
+<h4 class="text-lg font-bold text-on-surface mb-3">Financial Health</h4>
+<p class="text-on-surface-variant text-sm leading-relaxed">We analyze your income, spending, and savings behavior to generate your health score.</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-2xl intelligence-ray shadow-[0_4px_12px_rgba(15,23,42,0.03)] border border-outline-variant/10 group hover:translate-y-[-2px] transition-all duration-300">
+<div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">delete_outline</span>
+</div>
+<h4 class="text-lg font-bold text-on-surface mb-3">Waste Recovery</h4>
+<p class="text-on-surface-variant text-sm leading-relaxed">We compare cost vs usage to identify unnecessary expenses and subscription leaks.</p>
+</div>
+<div class="bg-surface-container-lowest p-8 rounded-2xl intelligence-ray shadow-[0_4px_12px_rgba(15,23,42,0.03)] border border-outline-variant/10 group hover:translate-y-[-2px] transition-all duration-300">
+<div class="w-12 h-12 rounded-xl bg-surface-container-low flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-3xl">psychology</span>
+</div>
+<h4 class="text-lg font-bold text-on-surface mb-3">Goal Intelligence</h4>
+<p class="text-on-surface-variant text-sm leading-relaxed">We predict your chances of reaching your goal based on your habits and market data.</p>
+</div>
+</div>
+</section>
+<!-- Section 2 & 3 -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+<!-- Section 2: Understand Your Score -->
+<section class="lg:col-span-2 space-y-6">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary-container/20 px-2 py-1 rounded">Deep Dive</span>
+<h3 class="text-xl font-bold text-on-surface">Understand Your Score</h3>
+</div>
+<div class="space-y-4">
+<details class="group bg-surface-container-low rounded-2xl overflow-hidden transition-all duration-300 border border-transparent open:border-outline-variant/20 open:bg-surface-container-lowest">
+<summary class="list-none flex justify-between items-center p-5 cursor-pointer font-bold text-on-surface">
+<span>How is my health score calculated?</span>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform text-primary">expand_more</span>
+</summary>
+<div class="px-5 pb-5 text-on-surface-variant text-sm leading-relaxed">
+                            Our algorithm looks at four main pillars: Liquidity (cash flow), Stability (reserve funds), Efficiency (spending optimization), and Growth (investment consistency). It translates complex ratios into a human-readable 1-100 score.
+                        </div>
+</details>
+<details class="group bg-surface-container-low rounded-2xl overflow-hidden transition-all duration-300 border border-transparent open:border-outline-variant/20 open:bg-surface-container-lowest">
+<summary class="list-none flex justify-between items-center p-5 cursor-pointer font-bold text-on-surface">
+<span>Why is my goal success low?</span>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform text-primary">expand_more</span>
+</summary>
+<div class="px-5 pb-5 text-on-surface-variant text-sm leading-relaxed">
+                            Low success probability usually indicates a mismatch between your current saving velocity and your target deadline. We also factor in behavioral volatility—how often you dip into savings—to provide a realistic projection.
+                        </div>
+</details>
+<details class="group bg-surface-container-low rounded-2xl overflow-hidden transition-all duration-300 border border-transparent open:border-outline-variant/20 open:bg-surface-container-lowest">
+<summary class="list-none flex justify-between items-center p-5 cursor-pointer font-bold text-on-surface">
+<span>What does 'waste' mean?</span>
+<span class="material-symbols-outlined group-open:rotate-180 transition-transform text-primary">expand_more</span>
+</summary>
+<div class="px-5 pb-5 text-on-surface-variant text-sm leading-relaxed">
+                            Waste is defined as financial output that provides no utility. This includes forgotten subscriptions, excessive service fees, and interest paid on debts that could be consolidated.
+                        </div>
+</details>
+</div>
+</section>
+<!-- Section 3: Common Questions -->
+<section class="space-y-6">
+<div class="flex items-center gap-2">
+<span class="text-[10px] font-bold uppercase tracking-widest text-primary bg-primary-container/20 px-2 py-1 rounded">Privacy &amp; FAQ</span>
+<h3 class="text-xl font-bold text-on-surface">Common Questions</h3>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl p-6 shadow-[0_4px_12px_rgba(15,23,42,0.03)] border border-outline-variant/10">
+<ul class="space-y-5">
+<li class="flex items-start gap-3 group cursor-pointer">
+<span class="material-symbols-outlined text-primary-container text-xl group-hover:scale-110 transition-transform">help</span>
+<span class="text-sm font-bold text-on-surface hover:text-primary transition-colors">Why do I need to answer questions?</span>
+</li>
+<li class="flex items-start gap-3 group cursor-pointer">
+<span class="material-symbols-outlined text-primary-container text-xl group-hover:scale-110 transition-transform">shield_with_heart</span>
+<span class="text-sm font-bold text-on-surface hover:text-primary transition-colors">Is my data safe?</span>
+</li>
+<li class="flex items-start gap-3 group cursor-pointer">
+<span class="material-symbols-outlined text-primary-container text-xl group-hover:scale-110 transition-transform">account_balance</span>
+<span class="text-sm font-bold text-on-surface hover:text-primary transition-colors">Do you access my bank account?</span>
+</li>
+</ul>
+</div>
+<div class="bg-primary/5 rounded-2xl p-6 border border-primary-container/20">
+<p class="text-[10px] font-bold uppercase tracking-[0.05em] text-primary mb-2">Need direct support?</p>
+<p class="text-sm text-on-surface-variant mb-4 leading-relaxed">Our institutional experts are available 24/7 for premium tier members.</p>
+<button class="w-full py-2.5 bg-primary text-white rounded-xl text-sm font-bold shadow-sm hover:opacity-90 active:scale-95 transition-all">Contact Specialist</button>
+</div>
+</section>
+</div>
+<!-- Section 4: Quick Action Help & CTA -->
+<section class="bg-surface-container p-10 rounded-2xl relative overflow-hidden">
+<div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="max-w-md">
+<h3 class="text-2xl font-bold text-on-surface mb-3">Still have questions?</h3>
+<p class="text-on-surface-variant leading-relaxed">Experience our AI Co-Pilot for a personalized tour of your financial architecture and tailored optimization tips.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+<div class="bg-surface-container-lowest p-4 rounded-xl flex items-center gap-3 shadow-sm border border-outline-variant/10 cursor-pointer hover:bg-white transition-colors">
+<div class="w-10 h-10 rounded bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-lg">payments</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">Financial Health</p>
+<p class="text-[10px] text-on-surface-variant">View details</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-4 rounded-xl flex items-center gap-3 shadow-sm border border-outline-variant/10 cursor-pointer hover:bg-white transition-colors">
+<div class="w-10 h-10 rounded bg-secondary-container flex items-center justify-center text-on-secondary-container">
+<span class="material-symbols-outlined text-lg">event_repeat</span>
+</div>
+<div>
+<p class="text-xs font-bold text-on-surface">Subscriptions</p>
+<p class="text-[10px] text-on-surface-variant">Manage recurring</p>
+</div>
+</div>
+<button class="bg-gradient-to-r from-primary to-primary-container text-white px-8 py-4 rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:translate-y-[-2px] active:scale-95 transition-all">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+                        Ask Co-Pilot
+                    </button>
+</div>
+</div>
+<!-- Decorative background elements -->
+<div class="absolute top-[-50px] right-[-50px] w-64 h-64 bg-primary-container/10 rounded-full blur-3xl"></div>
+<div class="absolute bottom-[-50px] left-[-20px] w-48 h-48 bg-secondary-container/20 rounded-full blur-3xl"></div>
+</section>
+</div>
+<!-- Footer -->
+<footer class="mt-20 border-t border-outline-variant/10 py-8">
+<div class="flex flex-col md:flex-row justify-between items-center gap-4 opacity-60">
+<p class="text-[11px] font-medium tracking-wide">© 2024 Institutional Intelligence Platform. All rights reserved.</p>
+<div class="flex gap-6">
+<a class="text-[10px] font-bold uppercase tracking-widest hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="text-[10px] font-bold uppercase tracking-widest hover:text-primary transition-colors" href="#">Terms</a>
+<a class="text-[10px] font-bold uppercase tracking-widest hover:text-primary transition-colors" href="#">Security</a>
+</div>
+</div>
+</footer>
+</main>
+</body></html>

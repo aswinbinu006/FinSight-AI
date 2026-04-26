@@ -1,0 +1,115 @@
+FINSIGHT AI — INTEGRATION GUIDE V2
+==================================
+This file maps exactly how the frontend code should integrate the models and specifically details all the Questions required by the AI pipeline as extracted from the "FinSight AI Prompt Reference" doc.
+
+PIPELINE ARCHITECTURE
+----------------------------------
+The FinSight models run in 2 stages:
+- STAGE 1: Shared Core Behavioral Questions (10 questions).
+- STAGE 2: Model-specific situational questions (Health, Waste, Goal).
+
+All questions below strictly map to the exact JSON inputs expected by the `.predict()` functions of the `finsight_models_v2` classes.
+
+
+======================================================================
+STAGE 1: CORE BEHAVIORAL QUESTIONS (B1 - B10)
+** (Pass these answers to Gemini to get 1.0 - 10.0 scores, which are fed into all models) **
+======================================================================
+B1: When your salary arrives, what do you do first?
+    - Save it first | Pay all bills first | Send money to family | Spend on myself then save | Spend on what I need | Usually run out before next salary
+
+B2: How do you spend on weekends vs weekdays?
+    - About the same | A little more | Significantly more | Actually less | Weekends are my big expense days
+
+B3: Do you track your subscriptions and what they cost?
+    - Yes, review all regularly | Know most roughly | Track some but not all | Sometimes forget | No idea what's charging me
+
+B4: How often do you buy things without planning?
+    - Almost never | Rarely (once a month) | Sometimes (few times/month) | Often | Constantly — it's stress relief
+
+B5: Have you ever set a savings goal and completed it?
+    - Yes, many times | Yes, once | Tried but fell short | Set goals but never follow through | Never set one
+
+B6: When stressed about money, what do you do?
+    - Cut expenses immediately | Make a plan | Ask someone for help | Ignore it | Spend to feel better | Panic and make bad decisions
+
+B7: Do you spend more to keep up with friends or social media?
+    - No, I don't care | Rarely | Sometimes I feel pressure | Yes, often | Social media heavily influences me
+
+B8: Do you have emergency savings to cover 3+ months of expenses?
+    - Yes, 6+ months | Yes, ~3 months | Partially, 1–2 months | Working on it | No fund at all
+
+B9: Do you have a budget or financial plan for the next 6 months?
+    - Yes, detailed | Rough plan | Vague idea | Go month to month | Avoid thinking about it
+
+B10: Do you read about saving, investing, or financial tips?
+    - Yes, regularly | Sometimes | Occasionally | Rarely | Never
+
+
+======================================================================
+STAGE 2: HEALTH MODEL INTEGRATION (H1 - H6)
+** Used by `HealthModel.predict()` **
+======================================================================
+H1: What is your monthly take-home income (after tax)?
+    - Below ₹20,000 | ₹20,000–₹50,000 | ₹50,000–₹1,00,000 | Above ₹1,00,000   (maps to 'income_bracket')
+
+H2: Do you currently pay any EMIs (loans, credit card dues)?
+    - No EMIs at all | Yes, manageable (under 30% of income) | Yes, it's a stretch (over 30%)   (maps to 'emi_burden')
+
+H3: What best describes your work situation?
+    - Salaried (private) | Salaried (government) | Self-employed / freelancer | Student | Not currently working   (maps to 'occupation_type')
+
+H4: Which type of city do you live in?
+    - Metro (Mumbai, Delhi, Bengaluru…) | Mid-size city (Pune, Nagpur, Jaipur…) | Smaller town or village   (maps to 'city_tier')
+
+H5: How many people are in your household (including you)?
+    - Just me | 2 people | 3–4 people | 5 or more   (maps to 'family_size')
+
+H6: How many people financially depend on you?
+    - Nobody | 1 person | 2 people | 3 or more   (maps to 'financial_dependents')
+
+
+======================================================================
+STAGE 2: WASTE MODEL INTEGRATION (W0 - W6)
+** Used by `WasteModel.predict_subscription()` in a loop **
+======================================================================
+W0: How many paid subscriptions or recurring services do you have?
+    - Just 1 | 2–3 | 4–5 | 6 or more | I'm not sure / let me think  (Determines how many times the W1-W6 loop repeats)
+
+W1: What is the name of this subscription?
+    - Free text input (e.g. Netflix, Spotify, Gym, Zomato Gold)  (maps to 'name')
+
+W2: How much do you pay, and how often?
+    - ₹ amount + frequency (Monthly / Yearly)  (maps to 'price', 'billing_cycle')
+
+W3: How often do you actually use {name}?
+    - Daily or almost daily | A few times a week | Once or twice a week | A few times a month | Rarely — I barely use it | Can't remember using it recently  (maps to 'usage_frequency')
+
+W4: When {name} bills you, do you notice it?
+    - Yes, I always see it and it's fine | Sometimes I notice it | I usually forget it's even charging me  (maps to 'awareness')
+
+W5: How would you describe {name} in your life?
+    - Essential — need it for work or daily life | Nice to have — useful sometimes | Mostly for fun or entertainment  (maps to 'necessity')
+
+W6: Does {name} have perks you actually use?
+    - Yes, I actively use the perks | It has perks but I rarely use them | No perks / I don't use them  (maps to 'has_perks')
+
+
+======================================================================
+STAGE 2: GOAL MODEL INTEGRATION (G1 - G5)
+** Used by `GoalModel.predict()` **
+======================================================================
+G1: What are you saving up for?
+    - Free text input (e.g. Emergency fund, laptop, trip to Goa, bike)  (maps to 'goal_description')
+
+G2: How much money do you need in total (₹)?
+    - Number input (e.g. 50000)   (maps to 'goal_target')
+
+G3: How much have you already saved towards this goal (₹)?
+    - Number input (Enter 0 if just starting)   (maps to 'saved_so_far')
+
+G4: How much can you realistically set aside each month for this goal (₹)?
+    - Number input (honest amount)   (maps to 'monthly_savings')
+
+G5: By when do you want to reach this goal?
+    - Within 3 months | 3–6 months | 6–12 months | 1–2 years | More than 2 years   (maps to 'months_remaining' by midpoint value)

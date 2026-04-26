@@ -1,0 +1,41 @@
+
+        body { font-family: 'Inter', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .intelligence-ray {
+            position: relative;
+        }
+        .intelligence-ray::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 15%;
+            bottom: 15%;
+            width: 2px;
+            background-color: #14b8a6;
+            border-radius: 2px;
+        }
+        
+        /* Updated Notification Toggle Mechanics for Visibility Fix */
+        #notification-toggle:checked ~ #notification-overlay { display: block; }
+        #notification-toggle:checked ~ main #notification-popover { 
+            opacity: 1; 
+            visibility: visible; 
+            transform: translateY(0) scale(1); 
+        }
+        /* Only blur content outside the header and popover when active */
+        #notification-toggle:checked ~ main #dashboard-content { filter: blur(4px); }
+        
+        .notification-badge::after {
+            content: '';
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            width: 8px;
+            height: 8px;
+            background-color: #ef4444;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+    

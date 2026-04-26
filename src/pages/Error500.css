@@ -1,0 +1,16 @@
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .error-bg-text {
+            user-select: none;
+            pointer-events: none;
+            opacity: 0.05;
+        }
+        .bg-soft-gradient {
+            background: linear-gradient(135deg, #F2F8F7 0%, #E6F3F1 100%);
+        }
+        .btn-shadow {
+            box-shadow: 0 4px 12px rgba(0, 107, 95, 0.12);
+        }
+    
