@@ -5,8 +5,10 @@ import {
   Settings, LogOut 
 } from 'lucide-react';
 import { logout } from '../firebase/auth';
+import { useUserData } from '../context/UserDataContext';
 
 const Sidebar = () => {
+  const { userData } = useUserData();
   const location = useLocation();
   const navigate = useNavigate();
   
@@ -19,7 +21,7 @@ const Sidebar = () => {
     },
     { to: '/waste', icon: Zap, label: 'Waste' },
     { to: '/goals', icon: Target, label: 'Goals' },
-    { to: '/copilot/dashboard', icon: Brain, label: 'Co-Pilot' },
+    { to: '/copilot', icon: Brain, label: 'Co-Pilot' },
     { to: '/settings', icon: Settings, label: 'Settings' },
   ];
 

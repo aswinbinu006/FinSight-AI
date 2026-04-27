@@ -14,6 +14,10 @@ import { useUserData } from '../context/UserDataContext';
 export default function Dashboard() {
   const { userData, loading } = useUserData();
 
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
@@ -249,7 +253,7 @@ export default function Dashboard() {
                                 <div className="h-4 w-full bg-white/5 rounded-full overflow-hidden border border-white/5 p-1">
                                     <Motion.div 
                                         initial={{ width: 0 }}
-                                        animate={{ width: '0%' }}
+                                        animate={{ width: `${Math.min(100, (userData.goal.current || 0) / (userData.goal.target || 1) * 100)}%` }}
                                         transition={{ duration: 1.5, ease: 'circOut' }}
                                         className="h-full bg-gradient-to-r from-primary/40 via-primary to-white rounded-full shadow-[0_0_20px_rgba(16,185,129,0.3)]"
                                     />
@@ -273,7 +277,7 @@ export default function Dashboard() {
             </div>
 
             {/* AI Advisor Card */}
-            <div className="col-span-12 lg:col-span-4 group">
+            <Link to="/copilot" className="col-span-12 lg:col-span-4 group cursor-pointer block">
                 <div className="p-8 h-full space-y-8 bg-[#0A0A0A] border border-primary/20 rounded-[2.5rem] relative overflow-hidden backdrop-blur-xl">
                     <div className="absolute top-0 left-0 w-32 h-32 bg-primary/10 blur-[40px]" />
                     <div className="flex items-center gap-4 relative z-10">
@@ -312,7 +316,7 @@ export default function Dashboard() {
                         )}
                     </div>
                 </div>
-            </div>
+            </Link>
         </div>
       </main>
     </div>

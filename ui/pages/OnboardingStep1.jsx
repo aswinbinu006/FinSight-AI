@@ -24,7 +24,7 @@ export default function OnboardingStep1() {
 
   // Restrict to 3 takes per month
   React.useEffect(() => {
-    if (loading) return;
+    if (loading || !authUser) return;
 
     const now = new Date();
     const currentMonthStr = `${now.getFullYear()}-${now.getMonth()}`;
@@ -34,7 +34,7 @@ export default function OnboardingStep1() {
     if (takesThisMonth >= 3) {
       navigate('/dashboard');
     }
-  }, [userData, loading, navigate]);
+  }, [userData, loading, authUser, navigate]);
 
   // Initialize local state from userData when it finishes loading
   const [payday, setPayday] = useState('');
@@ -59,7 +59,7 @@ export default function OnboardingStep1() {
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="animate-spin text-primary w-12 h-12" />
-          <p className="text-[10px] uppercase font-bold tracking-[0.4em] text-primary animate-pulse">Syncing Habits...</p>
+          <p className="text-[10px] uppercase font-bold tracking-[0.4em] text-primary animate-pulse">Establishing Session...</p>
         </div>
       </div>
     );
