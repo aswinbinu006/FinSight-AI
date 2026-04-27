@@ -8,12 +8,12 @@ import Lenis from 'lenis';
 import { motion } from 'framer-motion';
 import { 
   TrendingUp, ArrowRight, Shield, Zap, ChevronRight,
-  Activity, Cpu, Share2, Globe, ArrowUpRight
+  Activity, Cpu, Share2, Globe, ArrowUpRight, LogOut
 } from 'lucide-react';
-import './Landing.css';
-import './StoryCard.css';
+import '../styles/Landing.css';
+import '../styles/StoryCard.css';
 import InteractiveDevice from '../components/InteractiveDevice';
-import { onAuthChange } from '../firebase/auth';
+import { onAuthChange, logout } from '../firebase/auth';
 
 gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
 
@@ -254,6 +254,14 @@ export default function Landing() {
   const [isNavVisible, setIsNavVisible] = useState(false);
   const [user, setUser] = useState(null);
 
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
   useEffect(() => {
     const unsubscribe = onAuthChange((currentUser) => {
       setUser(currentUser);
@@ -263,26 +271,7 @@ export default function Landing() {
 
   /* ΓöÇΓöÇ Smooth Scrolling (Lenis) ΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇΓöÇ */
   useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: 'vertical',
-      gestureOrientation: 'vertical',
-      smoothWheel: true,
-      wheelMultiplier: 1.2, // Higher sensitivity for snappier response
-      touchMultiplier: 2.2,
-      lerp: 0.07, // Optimal smooth-stop feel
-    });
-
-    lenis.on('scroll', ScrollTrigger.update);
     ScrollTrigger.normalizeScroll({ allowNestedScroll: true });
-
-    function raf(time) {
-      // time is in seconds from ticker. Lenis needs milliseconds.
-      lenis.raf(time * 1000); 
-    }
-    gsap.ticker.add(raf);
-    gsap.ticker.lagSmoothing(0);
 
     // Critical for ensuring pinning and backward scroll works correctly
     const timer = setTimeout(() => {
@@ -291,8 +280,6 @@ export default function Landing() {
     }, 500);
 
     return () => {
-      lenis.destroy();
-      gsap.ticker.remove(raf);
       clearTimeout(timer);
     };
   }, []);
@@ -560,6 +547,9 @@ export default function Landing() {
                 <Link to="/dashboard" className="flex items-center justify-center px-7 py-2.5 rounded-full bg-[#10B981] text-[#000000] text-[10px] font-bold uppercase tracking-[0.15em] shadow-[0_5px_15px_rgba(16,185,129,0.2)] hover:shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:scale-105 active:scale-95 transition-all">
                   Dashboard
                 </Link>
+                <button onClick={handleLogout} className="flex items-center justify-center p-2 rounded-full bg-white/5 hover:bg-white/10 text-white/50 hover:text-white transition-all border border-white/5 hover:border-white/10" title="Logout">
+                  <LogOut size={16} />
+                </button>
               </div>
             ) : (
               <>

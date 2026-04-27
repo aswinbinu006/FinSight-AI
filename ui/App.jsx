@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
+import { UserDataProvider } from './context/UserDataContext';
 
 // Loading fallback
 const LoadingScreen = () => (
@@ -56,9 +57,49 @@ const Error404 = lazy(() => import('./pages/Error404'));
 const Error500 = lazy(() => import('./pages/Error500'));
 const NetworkError = lazy(() => import('./pages/NetworkError'));
 
+import { useEffect } from 'react';
+import Lenis from 'lenis';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
+
+function ScrollManager() {
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      orientation: 'vertical',
+      gestureOrientation: 'vertical',
+      smoothWheel: true,
+      wheelMultiplier: 1.2,
+      touchMultiplier: 2.2,
+      lerp: 0.07,
+    });
+
+    lenis.on('scroll', ScrollTrigger.update);
+
+    const raf = (time) => {
+      lenis.raf(time * 1000);
+    };
+
+    gsap.ticker.add(raf);
+    gsap.ticker.lagSmoothing(0);
+
+    return () => {
+      lenis.destroy();
+      gsap.ticker.remove(raf);
+    };
+  }, []);
+
+  return null;
+}
+
 function App() {
   return (
+    <UserDataProvider>
     <BrowserRouter>
+      <ScrollManager />
       <Suspense fallback={<LoadingScreen />}>
         <Routes>
           {/* Public Pages */}
@@ -115,6 +156,7 @@ function App() {
         </Routes>
       </Suspense>
     </BrowserRouter>
+    </UserDataProvider>
   );
 }
 

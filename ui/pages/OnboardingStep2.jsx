@@ -1,132 +1,91 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronRight, ArrowLeft, Zap, ShoppingCart, Target, AlertCircle } from 'lucide-react';
+import { useUserData } from '../context/UserDataContext';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ShoppingBag,
+  Target,
+  HeartPulse,
+  Sparkles
+} from 'lucide-react';
 
 export default function OnboardingStep2() {
   const navigate = useNavigate();
-  const [impulse, setImpulse] = useState(localStorage.getItem('finsight_behavioral_impulse') || '');
-  const [goalComp, setGoalComp] = useState(localStorage.getItem('finsight_behavioral_goal_comp') || '');
-  const [stress, setStress] = useState(localStorage.getItem('finsight_behavioral_stress') || '');
+  const { userData, updateUserData } = useUserData();
 
-  const isComplete = impulse && goalComp && stress;
+  const [impulse, setImpulse] = useState(userData.behavioral.answers.impulse || '');
+  const [goalComp, setGoalComp] = useState(userData.behavioral.answers.goal || '');
+  const [stress, setStress] = useState(userData.behavioral.answers.stress || '');
 
-  const handleContinue = () => {
-    if (!isComplete) return;
-    localStorage.setItem('finsight_behavioral_impulse', impulse);
-    localStorage.setItem('finsight_behavioral_goal_comp', goalComp);
-    localStorage.setItem('finsight_behavioral_stress', stress);
+  const handleNext = async () => {
+    await updateUserData('behavioral.answers.impulse', impulse);
+    await updateUserData('behavioral.answers.goal', goalComp);
+    await updateUserData('behavioral.answers.stress', stress);
     navigate('/onboarding/step3');
   };
 
-  const QuestionCard = ({ title, options, current, setter, icon: Icon }) => (
-    <div className="space-y-6">
-      <div className="flex items-center gap-4 px-4">
-        <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
-          <Icon size={20} />
-        </div>
-        <h3 className="text-xl font-black italic tracking-tight uppercase">{title}</h3>
-      </div>
-      <div className="grid grid-cols-2 gap-4 px-4">
-        {options.map((opt) => (
-          <button
-            key={opt.val}
-            onClick={() => setter(opt.val)}
-            className={`p-6 rounded-[2rem] border transition-all text-left flex flex-col justify-between group relative overflow-hidden ${
-              current === opt.val 
-                ? 'bg-primary/10 border-primary shadow-[0_0_30px_rgba(16,185,129,0.1)]' 
-                : 'bg-white/[0.02] border-white/5 hover:border-white/20'
-            }`}
-          >
-            <div className="relative z-10 space-y-1">
-              <div className={`text-[10px] font-black uppercase tracking-widest transition-colors ${current === opt.val ? 'text-primary' : 'text-white/40'}`}>Response Axis</div>
-              <div className="text-sm font-bold leading-tight">{opt.label}</div>
-            </div>
-            {current === opt.val && (
-              <div className="absolute right-4 bottom-4">
-                <ChevronRight size={16} className="text-primary" />
-              </div>
-            )}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+  const questions = [
+    { label: 'How often do you buy things without planning beforehand?', val: impulse, set: setImpulse, icon: <ShoppingBag size={18} className="text-primary" />, placeholder: 'e.g. Often impulsively, sometimes, almost never...' },
+    { label: 'Have you ever set a savings goal and actually completed it?', val: goalComp, set: setGoalComp, icon: <Target size={18} className="text-primary" />, placeholder: 'e.g. Yes many times, once, tried but failed, never...' },
+    { label: 'When you feel stressed about money, what do you do?', val: stress, set: setStress, icon: <HeartPulse size={18} className="text-primary" />, placeholder: 'e.g. Spend to feel better, cut back, ask for help...' }
+  ];
 
   return (
-    <div className="min-h-screen bg-black text-white p-6 md:p-12 font-body selection:bg-primary/30 flex flex-col items-center">
-      <div className="w-full max-w-4xl space-y-12 pb-24">
-        {/* Header Identity */}
-        <header className="flex justify-between items-center w-full">
-            <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Resilience Mapping // Node 02</span>
+    <div className="min-h-screen bg-black text-white font-body flex flex-col selection:bg-primary/30">
+      <header className="h-20 border-b border-white/5 flex items-center justify-between px-10">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+            <Sparkles size={16} className="text-black" />
+          </div>
+          <span className="text-[10px] font-black uppercase tracking-[0.4em] italic">Behavioral Profile</span>
+        </div>
+        <span className="text-[10px] font-mono text-primary animate-pulse tracking-widest">STEP 2 / 4</span>
+      </header>
+
+      <main className="flex-1 flex flex-col items-center justify-center p-10">
+        <div className="w-full max-w-xl mb-10 space-y-4">
+          <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+            <div className="h-full bg-primary w-2/4 rounded-full shadow-[0_0_15px_rgba(16,185,129,0.5)]" />
+          </div>
+        </div>
+
+        <div className="text-center space-y-3 mb-12 max-w-2xl">
+          <h1 className="text-4xl font-black italic tracking-tighter uppercase">Spending <span className="text-white/20">Psychology.</span></h1>
+          <p className="text-xs font-medium text-white/40 italic uppercase tracking-widest">These answers help the AI understand your spending triggers.</p>
+        </div>
+
+        <div className="w-full max-w-xl space-y-6">
+          {questions.map((q, i) => (
+            <div key={i} className="bg-[#0A0A0A] border border-white/5 p-6 rounded-[2rem] space-y-3 hover:border-primary/20 transition-all">
+              <div className="flex items-center gap-3">
+                {q.icon}
+                <label className="text-sm font-bold">{q.label}</label>
+              </div>
+              <textarea
+                value={q.val}
+                onChange={(e) => q.set(e.target.value)}
+                placeholder={q.placeholder}
+                rows={2}
+                className="w-full bg-white/[0.03] border border-white/5 rounded-xl px-5 py-4 text-sm font-medium focus:outline-none focus:border-primary/30 transition-all placeholder:text-white/10 resize-none"
+              />
             </div>
-            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20">Step 02 / 04</span>
-        </header>
-
-        <div className="space-y-4 text-center">
-            <h1 className="text-5xl font-black italic tracking-tighter leading-none">Map your <span className="text-white/20">Emotional Pulse.</span></h1>
-            <p className="text-xs font-medium text-white/40 uppercase tracking-[0.3em] italic">Stress and impulse response directly impact our growth simulations.</p>
+          ))}
         </div>
+      </main>
 
-        <div className="space-y-16">
-          <QuestionCard 
-            title="How often do you buy things impulsively?"
-            icon={ShoppingCart}
-            options={[
-              { label: 'Often Impulsively', val: 'often' },
-              { label: 'Sometimes', val: 'sometimes' },
-              { label: 'Almost Never', val: 'never' }
-            ]}
-            current={impulse}
-            setter={setImpulse}
-          />
-
-          <QuestionCard 
-            title="Have you completed a savings goal before?"
-            icon={Target}
-            options={[
-              { label: 'Yes, Many Times', val: 'often' },
-              { label: 'Yes, Once', val: 'once' },
-              { label: 'Tried But Failed', val: 'failed' },
-              { label: 'Never set any', val: 'never' }
-            ]}
-            current={goalComp}
-            setter={setGoalComp}
-          />
-
-          <QuestionCard 
-            title="How do you handle financial stress?"
-            icon={AlertCircle}
-            options={[
-              { label: 'Spend to Feel Better', val: 'spend' },
-              { label: 'Cut Back Expenses', val: 'cut' },
-              { label: 'Ask for Assistance', val: 'ask' },
-              { label: 'Ignore the Situation', val: 'ignore' }
-            ]}
-            current={stress}
-            setter={setStress}
-          />
-        </div>
-
-        <div className="flex justify-between items-center pt-10 border-t border-white/5">
-            <button 
-                onClick={() => navigate('/onboarding/step1')}
-                className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-white transition-all group"
-            >
-                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Previous Node
-            </button>
-            <button 
-                onClick={handleContinue}
-                disabled={!isComplete}
-                className="group relative px-16 py-5 bg-white text-black rounded-2xl font-black text-[12px] uppercase tracking-[0.3em] overflow-hidden transition-all hover:scale-105 active:scale-95 disabled:opacity-30 disabled:grayscale"
-            >
-                Next Phase <Zap className="inline-block ml-3 mb-1" size={16} />
-            </button>
-        </div>
-      </div>
+      <footer className="h-24 border-t border-white/5 px-12 flex justify-between items-center bg-black/80 backdrop-blur-xl">
+        <button onClick={() => navigate('/onboarding/step1')} className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-white transition-colors group">
+          <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Go Back
+        </button>
+        <button
+          onClick={handleNext}
+          disabled={!impulse || !goalComp || !stress}
+          className="px-10 py-4 bg-primary text-black text-[12px] font-black uppercase tracking-[0.3em] rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-primary/20 disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:scale-100"
+        >
+          Next Step <ChevronRight size={16} className="inline ml-1" />
+        </button>
+      </footer>
     </div>
   );
 }
-
-

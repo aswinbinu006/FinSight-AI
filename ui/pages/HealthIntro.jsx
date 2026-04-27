@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { useUserData } from '../context/UserDataContext';
 import { 
   HeartPulse, 
   Trash2, 
@@ -14,6 +15,9 @@ import {
 } from 'lucide-react';
 
 export default function HealthIntro() {
+  const { userData } = useUserData();
+  const isOnboarded = userData.behavioral.completed;
+
   return (
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">
       <Sidebar activePage="health" />
@@ -60,9 +64,9 @@ export default function HealthIntro() {
 
             {/* Action Zone */}
             <div className="flex flex-col items-center gap-6 pt-4">
-                <Link to="/onboarding/step1" className="group relative px-14 py-5 bg-white text-black rounded-[1.5rem] font-black text-[12px] uppercase tracking-[0.3em] overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_60px_rgba(255,255,255,0.05)] border-4 border-transparent hover:border-primary/20">
+                <Link to={isOnboarded ? "/health/dashboard" : "/onboarding/step1"} className="group relative px-14 py-5 bg-white text-black rounded-[1.5rem] font-black text-[12px] uppercase tracking-[0.3em] overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-[0_0_60px_rgba(255,255,255,0.05)] border-4 border-transparent hover:border-primary/20">
                     <span className="relative z-10 flex items-center gap-3">
-                        Initialize Diagnostic <ChevronRight size={20}/>
+                        {isOnboarded ? 'Access Diagnostic Dashboard' : 'Initialize Diagnostic'} <ChevronRight size={20}/>
                     </span>
                 </Link>
                 <div className="flex items-center gap-8 text-[10px] font-black uppercase tracking-[0.3em] text-white/20">

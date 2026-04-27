@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { useUserData } from '../context/UserDataContext';
 import { 
   Trash2, 
   ArrowRight, 
@@ -15,20 +16,14 @@ import {
 
 export default function WasteIntro() {
   const navigate = useNavigate();
+  const { userData } = useUserData();
 
   useEffect(() => {
-    const saved = localStorage.getItem('finsight_subscriptions');
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          navigate('/waste/monthly', { replace: true });
-        }
-      } catch (e) {
-        console.error("Failed to parse subscriptions", e);
-      }
+    const subs = userData.waste.subscriptions || [];
+    if (subs.length > 0) {
+      navigate('/waste/monthly', { replace: true });
     }
-  }, [navigate]);
+  }, [navigate, userData.waste.subscriptions]);
 
   return (
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">

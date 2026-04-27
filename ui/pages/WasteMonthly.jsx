@@ -3,12 +3,11 @@ import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { Trash2, AlertTriangle, TrendingDown, ArrowRight, Download, Brain, Sparkles, ShieldAlert, CreditCard } from 'lucide-react';
 import { formatINR } from '../utils';
+import { useUserData } from '../context/UserDataContext';
 
 export default function WasteMonthly() {
-  const [subscriptions] = useState(() => {
-    const saved = localStorage.getItem('finsight_subscriptions');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const { userData } = useUserData();
+  const subscriptions = userData.waste.subscriptions || [];
 
   const processedSubs = subscriptions.map(sub => {
       // Calculate normalized monthly cost

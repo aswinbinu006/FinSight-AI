@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { useUserData } from '../context/UserDataContext';
 import { 
   Target, 
   ArrowRight, 
@@ -14,6 +15,9 @@ import {
 } from 'lucide-react';
 
 export default function GoalIntro() {
+  const { userData } = useUserData();
+  const hasActiveGoal = userData.goal.target > 0;
+
   return (
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">
       <Sidebar activePage="goal" />
@@ -83,9 +87,20 @@ export default function GoalIntro() {
 
             {/* CTA Section */}
             <div className="flex flex-col items-center gap-6 pt-4">
-                <Link to="/goals/step1" className="px-12 py-4 bg-primary text-black font-black text-[12px] uppercase tracking-[0.3em] rounded-2xl hover:scale-105 transition-all shadow-2xl shadow-primary/20 flex items-center gap-3">
-                    Initialize Configuration <ChevronRight size={18} />
-                </Link>
+                {hasActiveGoal ? (
+                    <div className="flex gap-4">
+                        <Link to="/goals/result" className="px-12 py-4 bg-primary text-black font-black text-[12px] uppercase tracking-[0.3em] rounded-2xl hover:scale-105 transition-all shadow-2xl shadow-primary/20 flex items-center gap-3">
+                            View Active Trajectory <ChevronRight size={18} />
+                        </Link>
+                        <Link to="/goals/step1" className="px-12 py-4 bg-[#0A0A0A] text-white/50 border border-white/10 font-black text-[12px] uppercase tracking-[0.3em] rounded-2xl hover:text-white hover:border-white/20 transition-all flex items-center gap-3">
+                            Establish New Goal
+                        </Link>
+                    </div>
+                ) : (
+                    <Link to="/goals/step1" className="px-12 py-4 bg-primary text-black font-black text-[12px] uppercase tracking-[0.3em] rounded-2xl hover:scale-105 transition-all shadow-2xl shadow-primary/20 flex items-center gap-3">
+                        Initialize Configuration <ChevronRight size={18} />
+                    </Link>
+                )}
                 <div className="flex items-center gap-8 text-[10px] font-black uppercase tracking-[0.3em] text-white/20">
                     <div className="flex items-center gap-2 italic">
                         <Activity size={12} className="text-primary" />

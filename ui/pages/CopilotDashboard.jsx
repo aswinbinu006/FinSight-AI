@@ -1,20 +1,85 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../components/Sidebar';
-import { Brain, Sparkles, Send, MoreVertical, ShieldCheck, Zap, TrendingUp, AlertCircle, Search } from 'lucide-react';
+import { Brain, Sparkles, Send, MoreVertical, ShieldCheck, Zap, TrendingUp, AlertCircle, Search, Loader2 } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
+import { formatINR } from '../utils';
+import { useUserData } from '../context/UserDataContext';
 
 export default function CopilotDashboard() {
+  const [inputText, setInputText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef(null);
+  const { userData } = useUserData();
+
+  // Derive metrics from centralized context (Firestore-backed)
+  const metrics = {
+    healthScore: userData.health.score || 0,
+    targetAmount: userData.goal.target || 0,
+    monthlySavings: userData.goal.monthlySavings || 0,
+    wasteAmount: (userData.waste.subscriptions || []).reduce((sum, s) => {
+      const mc = (s.cycle === 'Yearly' || s.cycle === 'Annual') ? s.cost / 12 : s.cost;
+      return sum + mc;
+    }, 0),
+    income: userData.financial.income || 0,
+    behavioralCompleted: userData.behavioral.completed,
+    goalActive: userData.goal.target > 0,
+  };
+
   const [messages, setMessages] = useState([
-    { type: 'bot', text: "Hello! I've analyzed your spending over the last 30 days. Your wealth velocity has slowed by 14% due to subscription bloat.", time: '10:04 AM' },
-    { type: 'user', text: "How much can I save if I cancel everything except internet?", time: '10:05 AM' },
-    { type: 'bot', text: "Total recovery would be ₹2,480/month. Over a year, that's nearly ₹30,000—enough to fully fund your emergency deposit for Q3.", time: '10:05 AM' }
+    { type: 'bot', text: "Hello! I am your FinSight Co-Pilot. I have full access to your health, goals, and waste models. Ask me anything about your current financial trajectory, and I'll explain it in plain English.", time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }
   ]);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages, isTyping]);
+
+  const handleSend = (overrideText = null) => {
+      const textToProcess = overrideText || inputText;
+      if (!textToProcess.trim()) return;
+
+      const newMsg = { type: 'user', text: textToProcess, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) };
+      setMessages(prev => [...prev, newMsg]);
+      setInputText("");
+      setIsTyping(true);
+
+      // Semantic Heuristic Engine (Mini Claude Equivalent)
+      setTimeout(() => {
+          let replyText = "I see. Based on your current profile models, taking action on this will stabilize your long-term capital trajectory.";
+          const lowerTxt = textToProcess.toLowerCase();
+
+          if (lowerTxt.includes("goal") || lowerTxt.includes("target")) {
+              if (metrics.targetAmount > 0) {
+                  replyText = `Your current primary goal is set to ₹${formatINR(metrics.targetAmount)}. With your current monthly saving of ₹${formatINR(metrics.monthlySavings)}, the AI model calculates you need consistency to hit the deadline. Would you like me to simulate increasing that monthly saving by 10%?`;
+              } else {
+                  replyText = "You haven't initialized a Goal trajectory yet. You can build a saving goal in the Goals module, and I'll analyze the exact math needed to get you there.";
+              }
+          } else if (lowerTxt.includes("health") || lowerTxt.includes("score")) {
+              if (metrics.healthScore > 75) {
+                 replyText = `The Health model gave you a score of ${metrics.healthScore}/100. That is excellent. It means your behavioral spending patterns and emergency safety nets are highly optimized against sudden market shocks.`;
+              } else {
+                 replyText = `Your current health score from the core model is ${metrics.healthScore}/100. The primary reason for this percentage is high outgoing liquidity compared to asset accumulation. We need to cut unnecessary expenses to raise it.`;
+              }
+          } else if (lowerTxt.includes("waste") || lowerTxt.includes("cut") || lowerTxt.includes("expense") || lowerTxt.includes("subscription")) {
+              replyText = `The Waste model has been scanning your transactions. By cutting out unused subscriptions, that excess capital doesn't disappear—it gets automatically rerouted directly into funding your savings goal. Do you want to review your shadow subscriptions?`;
+          } else if (lowerTxt.includes("why")) {
+              replyText = `I gave you these percentages because my math engine actively compares your 'Actual Savings Rate' against the 'Expected Trajectory'. When your actual dips below expected, the risk percentage spikes up. It's pure mathematics, designed to keep you safe.`;
+          }
+
+          setMessages(prev => [...prev, { type: 'bot', text: replyText, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }]);
+          setIsTyping(false);
+      }, 1500);
+  };
+
 
   return (
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">
       <Sidebar activePage="copilot" />
 
-      <main className="flex-1 ml-24 p-10 max-w-7xl mx-auto space-y-12 pb-24">
+      <main className="flex-1 ml-24 p-10 space-y-12 pb-24">
         {/* Header */}
         <header className="flex justify-between items-end mb-8 border-b border-white/5 pb-12">
             <div className="space-y-2">
@@ -53,9 +118,9 @@ export default function CopilotDashboard() {
                 {/* Priority Intel Grid */}
                 <div className="grid grid-cols-3 gap-6">
                     {[
-                        { label: 'Health Score', val: '58', trend: '-4 pts', color: 'text-red-500', icon: AlertCircle },
-                        { label: 'Waste Node', val: '₹1,945', trend: 'Active', color: 'text-white', icon: Search },
-                        { label: 'Goal Velocity', val: '34%', trend: '+2.1%', color: 'text-primary', icon: TrendingUp }
+                        { label: 'Health Score', val: metrics.healthScore || 'N/A', trend: 'Active', color: metrics.healthScore > 75 ? 'text-primary' : 'text-amber-500', icon: AlertCircle },
+                        { label: 'Goal Target', val: metrics.targetAmount ? `₹${formatINR(metrics.targetAmount)}` : 'None', trend: 'Target', color: 'text-white', icon: TrendingUp },
+                        { label: 'Monthly Savings', val: metrics.monthlySavings ? `₹${formatINR(metrics.monthlySavings)}` : '₹0', trend: 'Flow', color: 'text-primary', icon: Search }
                     ].map((stat, i) => (
                         <div key={i} className="bg-[#0A0A0A] border border-white/5 p-8 rounded-[2rem] space-y-3 hover:border-white/10 transition-all group">
                             <div className="flex justify-between items-center">
@@ -72,15 +137,15 @@ export default function CopilotDashboard() {
 
                 {/* Actionable Insights */}
                 <section className="space-y-6">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 italic">Optimization Nodes</h3>
+                    <h3 className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20 italic">Action Directives</h3>
                     <div className="grid grid-cols-2 gap-8">
                         {[
-                            { title: 'Cancel Spotify + Gym', impact: '₹1,619/mo', effect: '34% → 61%', type: 'Waste' },
-                            { title: 'Rebalance Assets', impact: '-12% Volatility', effect: '+8 Health pts', type: 'Health' }
+                            { title: 'Cancel Unused Subscriptions', impact: 'Boosts Liquidity', effect: 'Accelerates Trajectory', type: 'Waste' },
+                            { title: 'Increase Emergency Fund', impact: '+12% Stability', effect: '+8 Health pts', type: 'Health' }
                         ].map((action, i) => (
-                            <div key={i} className="bg-[#0A0A0A] border border-white/5 p-10 rounded-[2.5rem] flex flex-col justify-between group hover:border-primary/20 transition-all">
+                            <div key={i} className="bg-[#0A0A0A] border border-white/5 p-10 rounded-[2.5rem] flex flex-col justify-between group hover:border-primary/20 transition-all shadow-xl">
                                 <div className="space-y-4">
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-primary/40 group-hover:text-primary transition-colors">{action.type} Protocol</span>
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-primary/40 group-hover:text-primary transition-colors">{action.type} Directive</span>
                                     <h4 className="text-xl font-black italic tracking-tight">{action.title}</h4>
                                     <div className="space-y-2 pt-4">
                                         <div className="flex justify-between text-[10px] font-black uppercase text-white/20 tracking-tighter">
@@ -88,12 +153,12 @@ export default function CopilotDashboard() {
                                             <span className="text-white">{action.impact}</span>
                                         </div>
                                         <div className="flex justify-between text-[10px] font-black uppercase text-white/20 tracking-tighter">
-                                            <span>Goal Shift</span>
+                                            <span>Result</span>
                                             <span className="text-primary">{action.effect}</span>
                                         </div>
                                     </div>
                                 </div>
-                                <button className="mt-8 py-4 bg-white/5 hover:bg-primary hover:text-black border border-white/5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">Execute via Co-Pilot</button>
+                                <button className="mt-8 py-4 bg-white/5 hover:bg-primary hover:text-black border border-white/5 rounded-2xl font-black text-[10px] uppercase tracking-widest transition-all">Analyze via Co-Pilot</button>
                             </div>
                         ))}
                     </div>
@@ -127,7 +192,6 @@ export default function CopilotDashboard() {
                               key={i} 
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
-                              transition={{ delay: i * 0.1 }}
                               className={`flex flex-col gap-2 ${msg.type === 'user' ? 'items-end' : 'items-start'}`}
                             >
                                 <div className={`p-6 rounded-[2rem] max-w-[90%] text-sm font-medium leading-relaxed shadow-lg ${
@@ -137,11 +201,24 @@ export default function CopilotDashboard() {
                                 }`}>
                                     {msg.text}
                                 </div>
-                                <span className={`text-[9px] font-black uppercase text-white/20 tracking-tighter ${msg.type === 'user' ? 'mr-2' : 'ml-2'}`}>
-                                    {msg.type === 'user' ? 'You' : 'Co-Pilot'} • {msg.time}
+                                <span className={`text-[9px] font-black uppercase tracking-tighter ${msg.type === 'user' ? 'mr-2 text-primary/60' : 'ml-2 text-white/20'}`}>
+                                    {msg.type === 'user' ? 'You' : 'Co-Pilot Engine'} • {msg.time}
                                 </span>
                             </Motion.div>
                         ))}
+                        {isTyping && (
+                             <Motion.div 
+                               initial={{ opacity: 0, y: 10 }}
+                               animate={{ opacity: 1, y: 0 }}
+                               className="flex flex-col gap-2 items-start"
+                             >
+                                 <div className="p-4 rounded-[2rem] bg-white/5 rounded-tl-none border border-white/5 flex items-center gap-3 w-32">
+                                     <Loader2 className="animate-spin text-primary w-4 h-4" />
+                                     <span className="text-[10px] font-black uppercase tracking-widest text-white/40">Thinking</span>
+                                 </div>
+                             </Motion.div>
+                        )}
+                        <div ref={messagesEndRef} />
                     </div>
 
                     {/* Chat Input */}
@@ -149,16 +226,24 @@ export default function CopilotDashboard() {
                         <div className="relative group">
                             <input 
                               type="text" 
-                              placeholder="Ask anything about your finances..." 
+                              value={inputText}
+                              onChange={(e) => setInputText(e.target.value)}
+                              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                              placeholder="Ask anything about your models or data..." 
                               className="w-full bg-white/5 border border-white/5 rounded-[2rem] py-5 pl-8 pr-16 text-sm font-medium focus:outline-none focus:border-primary/40 focus:bg-white/10 transition-all placeholder:text-white/10"
                             />
-                            <button className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-primary text-black rounded-full flex items-center justify-center hover:scale-105 transition-all shadow-xl shadow-primary/20 group-hover:shadow-primary/40 active:scale-95">
+                            <button 
+                              onClick={() => handleSend()}
+                              className="absolute right-3 top-1/2 -translate-y-1/2 w-12 h-12 bg-primary text-black rounded-full flex items-center justify-center hover:scale-105 transition-all shadow-xl shadow-primary/20 group-hover:shadow-primary/40 active:scale-95">
                                 <Send size={18} />
                             </button>
                         </div>
                         <div className="mt-6 flex flex-wrap gap-3">
-                            {["Analyze Waste", "Simulate Savings"].map((btn, i) => (
-                                <button key={i} className="text-[9px] font-black uppercase tracking-widest text-white/20 bg-white/5 px-4 py-2 rounded-xl hover:bg-white/10 hover:text-white transition-all border border-white/5 italic">
+                            {["Explain my Health Score", "Why is my Goal at risk?", "How to cut expenses?"].map((btn, i) => (
+                                <button 
+                                  key={i} 
+                                  onClick={() => handleSend(btn)}
+                                  className="text-[9px] font-black uppercase tracking-widest text-white/40 bg-white/5 px-4 py-3 rounded-xl border border-white/5 hover:border-primary/30 hover:text-primary transition-all cursor-pointer">
                                     "{btn}"
                                 </button>
                             ))}

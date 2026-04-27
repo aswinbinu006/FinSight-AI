@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ArrowLeft, Wand2, Calculator, IndianRupee, Loader2, CheckCircle2 } from 'lucide-react';
-import { scoreBehavioralAnswers, getBehavioralAnswersFromStorage } from '../services/behavioralService';
-import { getCurrentUser } from '../firebase/auth';
-import { saveBehavioralData, saveFinancialData } from '../firebase/firestore';
+import { scoreBehavioralAnswers } from '../services/behavioralService';
+import { useUserData } from '../context/UserDataContext';
 
 export default function OnboardingStep4() {
   const navigate = useNavigate();
-  const [income, setIncome] = useState(localStorage.getItem('finsight_income') || '');
-  const [emi, setEmi] = useState(localStorage.getItem('finsight_emi') || '');
+  const { userData, updateUserDataBatch } = useUserData();
+
+  const [income, setIncome] = useState(userData.financial.income || '');
+  const [emi, setEmi] = useState(userData.financial.emi || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -24,33 +25,41 @@ export default function OnboardingStep4() {
     setError('');
     
     try {
-      const user = getCurrentUser();
-      if (!user) {
-        throw new Error('User not authenticated');
-      }
-      
-      // Save income and EMI to localStorage (for backward compatibility)
-      localStorage.setItem('finsight_income', income);
-      localStorage.setItem('finsight_emi', emi || '0');
-      
-      // Get all behavioral answers
-      const answers = getBehavioralAnswersFromStorage();
+      // Get all behavioral answers from context (already in Firestore)
+      const answers = userData.behavioral.answers;
       
       // Send to backend for Gemini scoring
       const scores = await scoreBehavioralAnswers(answers);
       
-      // Store scores in localStorage (for backward compatibility)
-      localStorage.setItem('finsight_behavioral_scores', JSON.stringify(scores));
-      localStorage.setItem('finsight_behavioral_completed', 'true');
-      localStorage.setItem('finsight_onboarded', 'true');
+      // Calculate a composite health score
+      const scoreValues = Object.values(scores).filter(v => typeof v === 'number');
+      let healthScore = 84.5;
+      if (scoreValues.length > 0) {
+          const totalScore = scoreValues.reduce((a, b) => a + b, 0);
+          const maxPossible = scoreValues.length * 10;
+          healthScore = (totalScore / maxPossible) * 100;
+      }
       
-      // Save to Firestore
-      await saveBehavioralData(user.uid, { answers, scores });
-      await saveFinancialData(user.uid, { income, emi: emi || '0' });
+      // Save everything to Firestore via context (no localStorage)
+      await updateUserDataBatch({
+        financial: {
+          income: parseFloat(income),
+          emi: parseFloat(emi) || 0,
+        },
+        behavioral: {
+          ...userData.behavioral,
+          completed: true,
+          scores: scores,
+        },
+        health: {
+          score: parseFloat(healthScore.toFixed(1)),
+          explanation: '',
+        },
+      });
       
-      // Navigate to dashboard
+      // Navigate to Health Dashboard  
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/health/dashboard');
       }, 1000);
       
     } catch (err) {
@@ -67,14 +76,14 @@ export default function OnboardingStep4() {
         <header className="flex justify-between items-center w-full">
             <div className="flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Quantitative Core // Node 04</span>
+                <span className="text-[10px] font-black uppercase tracking-[0.5em] text-primary">Financial Core // Step 04</span>
             </div>
             <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/20">Step 04 / 04</span>
         </header>
 
         <div className="space-y-4 text-center">
-            <h1 className="text-5xl font-black italic tracking-tighter leading-none">Initialize <span className="text-white/20">Terminal.</span></h1>
-            <p className="text-xs font-medium text-white/40 uppercase tracking-[0.3em] italic">Finalizing the hard metrics for your financial health simulation.</p>
+            <h1 className="text-5xl font-black italic tracking-tighter leading-none">Finalize <span className="text-white/20">Profile.</span></h1>
+            <p className="text-xs font-medium text-white/40 uppercase tracking-[0.3em] italic">Enter your income and obligations to complete your financial profile.</p>
         </div>
 
         <div className="space-y-20">
@@ -83,7 +92,7 @@ export default function OnboardingStep4() {
               <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary border border-primary/20">
                 <IndianRupee size={20} />
               </div>
-              <h3 className="text-2xl font-black italic tracking-tighter uppercase">Monthly Income Velocity</h3>
+              <h3 className="text-2xl font-black italic tracking-tighter uppercase">Monthly Income</h3>
             </div>
             <div className="relative group px-4">
                 <span className="absolute left-12 top-1/2 -translate-y-1/2 text-4xl font-bold text-white/10 group-focus-within:text-primary transition-colors italic">₹</span>
@@ -155,7 +164,7 @@ export default function OnboardingStep4() {
                 disabled={loading}
                 className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-white transition-all group disabled:opacity-30"
             >
-                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Previous Node
+                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> Previous Step
             </button>
             <button 
                 onClick={handleComplete}
@@ -169,7 +178,7 @@ export default function OnboardingStep4() {
                   </>
                 ) : (
                   <>
-                    Initialize Terminal <Wand2 className="inline-block ml-4 mb-1" size={18} />
+                    Complete Profile <Wand2 className="inline-block ml-4 mb-1" size={18} />
                   </>
                 )}
             </button>
@@ -178,4 +187,3 @@ export default function OnboardingStep4() {
     </div>
   );
 }
-

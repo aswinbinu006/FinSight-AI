@@ -22,7 +22,6 @@ const Sidebar = () => {
   const handleLogout = async () => {
     try {
       await logout();
-      localStorage.clear();
       navigate('/login');
     } catch (err) {
       console.error('Logout failed:', err);

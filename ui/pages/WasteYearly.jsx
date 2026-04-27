@@ -15,26 +15,25 @@ import {
   FileText,
   Download
 } from 'lucide-react';
+import { useUserData } from '../context/UserDataContext';
 
 export default function WasteYearly() {
-  const [subscriptions] = React.useState(() => {
-    const saved = localStorage.getItem('finsight_subscriptions');
-    const parsed = saved ? JSON.parse(saved) : [];
-    return parsed.map(sub => {
-       const isWaste = sub.usage ? (sub.usage === 'Rarely' || sub.usage === 'Never') : (sub.cost > 1000);
-       const yearlyCost = sub.cycle === 'Yearly' || sub.cycle === 'Annual' ? sub.cost : sub.cost * 12;
-       return {
-           ...sub,
-           isWaste,
-           yearlyCost,
-           type: sub.cycle || "Monthly",
-           status: isWaste ? "At Risk" : "Active",
-           utility: isWaste ? "Low Utility" : "High Utility",
-           utilityColor: isWaste ? "text-red-500" : "text-primary",
-           risk: isWaste ? "Abandoned" : "Stable",
-           icon: isWaste ? <Trash2 className="text-red-500" size={20} /> : <Zap className="text-primary" size={20} />
-       };
-    });
+  const { userData } = useUserData();
+  const rawSubs = userData.waste.subscriptions || [];
+  const subscriptions = rawSubs.map(sub => {
+     const isWaste = sub.usage ? (sub.usage === 'Rarely' || sub.usage === 'Never') : (sub.cost > 1000);
+     const yearlyCost = sub.cycle === 'Yearly' || sub.cycle === 'Annual' ? sub.cost : sub.cost * 12;
+     return {
+         ...sub,
+         isWaste,
+         yearlyCost,
+         type: sub.cycle || "Monthly",
+         status: isWaste ? "At Risk" : "Active",
+         utility: isWaste ? "Low Utility" : "High Utility",
+         utilityColor: isWaste ? "text-red-500" : "text-primary",
+         risk: isWaste ? "Abandoned" : "Stable",
+         icon: isWaste ? <Trash2 className="text-red-500" size={20} /> : <Zap className="text-primary" size={20} />
+     };
   });
 
   const annualWasteScore = subscriptions.reduce((acc, sub) => {

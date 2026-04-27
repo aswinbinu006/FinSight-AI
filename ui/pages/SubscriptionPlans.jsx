@@ -17,7 +17,7 @@ export default function SubscriptionPlans() {
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">
       <Sidebar activePage="subscription" />
 
-      <main className="flex-1 ml-24 p-10 max-w-6xl mx-auto space-y-16 pb-24 flex flex-col">
+      <main className="flex-1 ml-24 p-10 space-y-16 pb-24 flex flex-col">
         {/* Header Section */}
         <header className="text-center space-y-4 max-w-2xl mx-auto border-b border-white/5 pb-16">
           <div className="flex items-center justify-center gap-3 text-primary uppercase text-[10px] font-black tracking-[0.5em]">

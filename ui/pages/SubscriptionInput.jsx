@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
+import { useUserData } from '../context/UserDataContext';
 import { 
   Plus, 
   Trash2, 
@@ -17,10 +18,8 @@ import {
 
 export default function SubscriptionInput() {
   const navigate = useNavigate();
-  const [subscriptions, setSubscriptions] = useState(() => {
-    const saved = localStorage.getItem('finsight_subscriptions');
-    return saved ? JSON.parse(saved) : [];
-  });
+  const { userData, updateUserData } = useUserData();
+  const [subscriptions, setSubscriptions] = useState(userData.waste.subscriptions || []);
 
   const [newName, setNewName] = useState('');
   const [newCost, setNewCost] = useState('');
@@ -28,17 +27,19 @@ export default function SubscriptionInput() {
   const [newUsage, setNewUsage] = useState('');
   const [editingId, setEditingId] = useState(null);
 
-  useEffect(() => {
-    localStorage.setItem('finsight_subscriptions', JSON.stringify(subscriptions));
-  }, [subscriptions]);
+  const persistSubs = (updatedSubs) => {
+    setSubscriptions(updatedSubs);
+    updateUserData({ waste: { subscriptions: updatedSubs } });
+  };
 
   const addSubscription = () => {
     if (!newName || !newCost || !newCycle || !newUsage) return;
     
+    let updatedSubs;
     if (editingId) {
-      setSubscriptions(subscriptions.map(s => 
+      updatedSubs = subscriptions.map(s => 
         s.id === editingId ? { ...s, name: newName, cost: parseFloat(newCost), cycle: newCycle, usage: newUsage } : s
-      ));
+      );
       setEditingId(null);
     } else {
       const newEntry = {
@@ -48,9 +49,10 @@ export default function SubscriptionInput() {
         cycle: newCycle,
         usage: newUsage
       };
-      setSubscriptions([...subscriptions, newEntry]);
+      updatedSubs = [...subscriptions, newEntry];
     }
     
+    persistSubs(updatedSubs);
     setNewName('');
     setNewCost('');
     setNewCycle('');
@@ -67,7 +69,8 @@ export default function SubscriptionInput() {
   };
 
   const removeSubscription = (id) => {
-    setSubscriptions(subscriptions.filter(s => s.id !== id));
+    const updatedSubs = subscriptions.filter(s => s.id !== id);
+    persistSubs(updatedSubs);
   };
 
   const formatINR = (val) => new Intl.NumberFormat('en-IN').format(val);

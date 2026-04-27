@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   ChevronLeft, 
@@ -11,19 +11,16 @@ import {
   Info,
   Scale
 } from 'lucide-react';
+import { useUserData } from '../context/UserDataContext';
 
 export default function GoalStep4() {
   const navigate = useNavigate();
-  const [savings, setSavings] = useState('');
+  const { userData, updateUserData } = useUserData();
+  const [savings, setSavings] = useState(userData.goal.monthlySavings || '');
 
-  useEffect(() => {
-    const saved = localStorage.getItem('finsight_monthlySavings');
-    if (saved) setSavings(saved);
-  }, []);
-
-  const handleNext = () => {
+  const handleNext = async () => {
     if (savings) {
-      localStorage.setItem('finsight_monthlySavings', savings);
+      await updateUserData('goal.monthlySavings', parseFloat(savings));
     }
     navigate('/goals/step5');
   };

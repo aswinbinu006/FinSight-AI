@@ -33,7 +33,7 @@ load_dotenv()
 # --- CONFIGURATION ---
 LOG_LEVEL = os.getenv("LOG_LEVEL", "INFO")
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
-SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH", "finsight.db")
+SQLITE_DB_PATH = os.getenv("SQLITE_DB_PATH", "database/finsight.db")
 
 logging.basicConfig(level=getattr(logging, LOG_LEVEL))
 logger = logging.getLogger("finsight.api")

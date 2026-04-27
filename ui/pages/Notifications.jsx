@@ -63,7 +63,7 @@ export default function Notifications() {
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">
       <Sidebar activePage="notifications" />
 
-      <main className="flex-1 ml-24 p-10 max-w-5xl mx-auto space-y-12 pb-24">
+      <main className="flex-1 ml-24 p-10 space-y-12 pb-24">
         {/* Header Section */}
         <header className="flex justify-between items-end mb-8 border-b border-white/5 pb-12">
           <div className="space-y-2">

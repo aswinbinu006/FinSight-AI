@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   ChevronLeft, 
@@ -10,19 +10,16 @@ import {
   Zap,
   Info
 } from 'lucide-react';
+import { useUserData } from '../context/UserDataContext';
 
 export default function GoalStep2() {
   const navigate = useNavigate();
-  const [amount, setAmount] = useState('');
+  const { userData, updateUserData } = useUserData();
+  const [amount, setAmount] = useState(userData.goal.target || '');
 
-  useEffect(() => {
-    const saved = localStorage.getItem('finsight_targetAmount');
-    if (saved) setAmount(saved);
-  }, []);
-
-  const handleNext = () => {
+  const handleNext = async () => {
     if (amount) {
-      localStorage.setItem('finsight_targetAmount', amount);
+      await updateUserData('goal.target', parseFloat(amount));
     }
     navigate('/goals/step3');
   };

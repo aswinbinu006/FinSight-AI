@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   ChevronLeft, 
@@ -12,24 +12,21 @@ import {
   Target,
   Timer
 } from 'lucide-react';
+import { useUserData } from '../context/UserDataContext';
 
 export default function GoalStep3() {
   const navigate = useNavigate();
-  const [selectedTimeframe, setSelectedTimeframe] = useState('3m');
+  const { userData, updateUserData } = useUserData();
+  const [selectedTimeframe, setSelectedTimeframe] = useState(userData.goal.timeframeId || '3m');
 
-  useEffect(() => {
-    const saved = localStorage.getItem('finsight_timeframeId');
-    if (saved) setSelectedTimeframe(saved);
-  }, []);
-
-  const handleNext = () => {
-    localStorage.setItem('finsight_timeframeId', selectedTimeframe);
+  const handleNext = async () => {
+    await updateUserData('goal.timeframeId', selectedTimeframe);
     navigate('/goals/step4');
   };
   
-  const handleSelect = (id) => {
+  const handleSelect = async (id) => {
     setSelectedTimeframe(id);
-    localStorage.setItem('finsight_timeframeId', id);
+    await updateUserData('goal.timeframeId', id);
     navigate('/goals/step4');
   };
 

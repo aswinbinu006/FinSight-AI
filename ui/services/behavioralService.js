@@ -16,7 +16,6 @@ export async function scoreBehavioralAnswers(answers) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`,
       },
       body: JSON.stringify({ answers }),
     });
@@ -60,51 +59,43 @@ function generateFallbackScores(answers) {
     learning: scoreAnswer(answers.learning),
   };
 }
-
 /**
- * Get behavioral answers from localStorage
- * @returns {Object} - All 10 behavioral answers
+ * Get behavioral answers from the UserDataContext object.
+ * Pass the `userData` from the context — no localStorage needed.
+ * @param {Object} userData - The centralized user data object from UserDataContext.
+ * @returns {Object} - All 10 behavioral answers.
  */
-export function getBehavioralAnswersFromStorage() {
+export function getBehavioralAnswersFromContext(userData) {
+  const a = userData?.behavioral?.answers || {};
   return {
-    payday: localStorage.getItem('finsight_behavioral_payday') || '',
-    weekend: localStorage.getItem('finsight_behavioral_weekend') || '',
-    subs: localStorage.getItem('finsight_behavioral_subs') || '',
-    impulse: localStorage.getItem('finsight_behavioral_impulse') || '',
-    goal: localStorage.getItem('finsight_behavioral_goal_comp') || '',
-    stress: localStorage.getItem('finsight_behavioral_stress') || '',
-    social: localStorage.getItem('finsight_behavioral_social') || '',
-    emergency: localStorage.getItem('finsight_behavioral_emergency') || '',
-    future: localStorage.getItem('finsight_behavioral_budget') || '',
-    learning: localStorage.getItem('finsight_behavioral_learning') || '',
+    payday: a.payday || '',
+    weekend: a.weekend || '',
+    subs: a.subs || '',
+    impulse: a.impulse || '',
+    goal: a.goal || '',
+    stress: a.stress || '',
+    social: a.social || '',
+    emergency: a.emergency || '',
+    future: a.future || '',
+    learning: a.learning || '',
   };
 }
 
 /**
- * Check if all behavioral questions are answered
+ * Check if all behavioral questions are answered (context-based).
+ * @param {Object} userData - The centralized user data object from UserDataContext.
  * @returns {boolean}
  */
-export function areBehavioralQuestionsComplete() {
-  const answers = getBehavioralAnswersFromStorage();
+export function areBehavioralQuestionsComplete(userData) {
+  const answers = getBehavioralAnswersFromContext(userData);
   return Object.values(answers).every(answer => answer !== '');
 }
 
 /**
- * Clear all behavioral answers from localStorage
+ * clearBehavioralAnswers is now a no-op.
+ * Clearing is handled via updateUserData({ behavioral: { answers: {}, completed: false } }).
+ * Kept for backward compatibility.
  */
 export function clearBehavioralAnswers() {
-  const keys = [
-    'finsight_behavioral_payday',
-    'finsight_behavioral_weekend',
-    'finsight_behavioral_subs',
-    'finsight_behavioral_impulse',
-    'finsight_behavioral_goal_comp',
-    'finsight_behavioral_stress',
-    'finsight_behavioral_social',
-    'finsight_behavioral_emergency',
-    'finsight_behavioral_budget',
-    'finsight_behavioral_learning',
-  ];
-  
-  keys.forEach(key => localStorage.removeItem(key));
+  // No-op: clearing is handled through UserDataContext
 }

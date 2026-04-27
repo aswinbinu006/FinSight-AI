@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import './NotificationPopup.css';
+import '../styles/NotificationPopup.css';
 
 export default function NotificationPopup() {
 

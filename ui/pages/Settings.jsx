@@ -41,15 +41,7 @@ export default function Settings() {
   };
 
   const handlePurgeCache = () => {
-    if (window.confirm('This will clear all locally cached intelligence data. Continue?')) {
-      const keysToRemove = [];
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('finsight_')) {
-          keysToRemove.push(key);
-        }
-      }
-      keysToRemove.forEach(key => localStorage.removeItem(key));
+    if (window.confirm('This will refresh all locally cached intelligence data from the cloud. Continue?')) {
       window.location.reload();
     }
   };
@@ -58,7 +50,7 @@ export default function Settings() {
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">
       <Sidebar />
 
-      <main className="flex-1 ml-24 p-10 max-w-5xl mx-auto space-y-12 pb-24">
+      <main className="flex-1 ml-24 p-10 space-y-12 pb-24">
         {/* Header */}
         <header className="flex justify-between items-end mb-8 border-b border-white/5 pb-12">
             <div className="space-y-2">

@@ -38,7 +38,6 @@ export default function Profile() {
 
   const handleLogout = async () => {
     await logout();
-    localStorage.clear();
     navigate('/login');
   };
 
@@ -46,7 +45,7 @@ export default function Profile() {
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">
       <Sidebar activePage="profile" />
 
-      <main className="flex-1 ml-24 p-10 max-w-6xl mx-auto space-y-12">
+      <main className="flex-1 ml-24 p-10 space-y-12 pb-24">
         {/* Header Profile Section */}
         <header className="flex flex-col md:flex-row items-center gap-10 bg-[#0A0A0A] border border-white/5 p-12 rounded-[3.5rem] shadow-2xl relative overflow-hidden">
             <div className="relative">

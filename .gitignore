@@ -24,7 +24,9 @@ dist-ssr
 *.sw?
 
 # Environment and Data
-.env
+**/.env
 .venv/
 __pycache__/
 *.db
+.firebaserc
+**/.kiro/
