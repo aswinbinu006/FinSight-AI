@@ -8,14 +8,16 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 /**
  * Submit all 10 behavioral answers to backend for Gemini scoring
  * @param {Object} answers - Object containing all 10 behavioral answers
+ * @param {string} authToken - Firebase ID token for authentication
  * @returns {Promise<Object>} - Numerical scores for all 10 dimensions
  */
-export async function scoreBehavioralAnswers(answers) {
+export async function scoreBehavioralAnswers(answers, authToken) {
   try {
     const response = await fetch(`${API_BASE_URL}/predict/behavioral-scores`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${authToken}`
       },
       body: JSON.stringify({ answers }),
     });

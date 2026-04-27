@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ArrowLeft, Wand2, Calculator, IndianRupee, Loader2, CheckCircle2 } from 'lucide-react';
 import { scoreBehavioralAnswers } from '../services/behavioralService';
 import { useUserData } from '../context/UserDataContext';
+import { auth } from '../firebase/auth';
 
 export default function OnboardingStep4() {
   const navigate = useNavigate();
@@ -25,11 +26,14 @@ export default function OnboardingStep4() {
     setError('');
     
     try {
-      // Get all behavioral answers from context (already in Firestore)
+      // Get auth token for backend call
+      const token = await auth.currentUser.getIdToken();
+      
+      // Get all behavioral answers from context
       const answers = userData.behavioral.answers;
       
       // Send to backend for Gemini scoring
-      const scores = await scoreBehavioralAnswers(answers);
+      const scores = await scoreBehavioralAnswers(answers, token);
       
       // Calculate a composite health score
       const scoreValues = Object.values(scores).filter(v => typeof v === 'number');
@@ -40,7 +44,19 @@ export default function OnboardingStep4() {
           healthScore = (totalScore / maxPossible) * 100;
       }
       
-      // Save everything to Firestore via context (no localStorage)
+      // Monthly take logic
+      const now = new Date();
+      const currentMonthStr = `${now.getFullYear()}-${now.getMonth()}`;
+      let takesThisMonth = userData.behavioral.takesThisMonth || 0;
+      let lastTakeMonthStr = userData.behavioral.lastTakeMonthStr || currentMonthStr;
+      
+      if (lastTakeMonthStr !== currentMonthStr) {
+        takesThisMonth = 1;
+      } else {
+        takesThisMonth += 1;
+      }
+      
+      // Save everything to Firestore via context
       await updateUserDataBatch({
         financial: {
           income: parseFloat(income),
@@ -50,6 +66,8 @@ export default function OnboardingStep4() {
           ...userData.behavioral,
           completed: true,
           scores: scores,
+          lastTakeMonthStr: currentMonthStr,
+          takesThisMonth: takesThisMonth
         },
         health: {
           score: parseFloat(healthScore.toFixed(1)),

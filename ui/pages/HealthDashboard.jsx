@@ -16,22 +16,21 @@ const HealthDashboard = () => {
   });
 
   useEffect(() => {
-    const healthScore = userData.health.score || 84.5;
+    const healthScore = userData.health.score || 0;
     
-    let band = 'Excellent';
-    if (healthScore < 30) band = 'Critical';
-    else if (healthScore < 50) band = 'High Risk';
-    else if (healthScore < 65) band = 'Average';
-    else if (healthScore < 80) band = 'Good';
+    let band = healthScore > 75 ? 'Sovereign' : (healthScore > 50 ? 'Tactical' : (healthScore > 0 ? 'Exposed' : 'Awaiting Audit'));
+    if (healthScore === 0) band = 'Pending Audit';
 
     setHealthData({
-      score: healthScore.toFixed(1),
+      score: healthScore > 0 ? healthScore.toFixed(1) : "0.0",
       status: band,
-      peerPercentile: 92,
-      stability: 'Solid Income',
-      discretionary: 'High Weekend Spending',
-      portfolio: 'Too Much Tech (14%)',
-      aiInsight: `"Your financial baseline is ${band.toLowerCase()}. We noticed you're spending more on non-essentials than usual. Tip: Cancel duplicate subscriptions to save money."`
+      peerPercentile: healthScore > 0 ? 92 : 0,
+      stability: healthScore > 0 ? 'Solid Income' : 'Awaiting Data',
+      discretionary: healthScore > 0 ? 'High Weekend Spending' : 'Awaiting Data',
+      portfolio: healthScore > 0 ? 'Too Much Tech (14%)' : 'Awaiting Data',
+      aiInsight: healthScore > 0 
+        ? `"Your financial baseline is ${band.toLowerCase()}. We noticed you're spending more on non-essentials than usual. Tip: Cancel duplicate subscriptions to save money."`
+        : "Complete your behavioral profile to unlock AI-driven financial health insights."
     });
   }, [userData.health.score]);
 
@@ -39,43 +38,45 @@ const HealthDashboard = () => {
     <div className="min-h-screen bg-black text-white flex font-body">
       <Sidebar activePage="health" />
 
-      <main className="flex-1 ml-24 p-10 space-y-12 pb-24">
+      <main className="flex-1 ml-24 p-8 lg:p-12 space-y-12 pb-24">
         {/* Header */}
-        <header className="flex justify-between items-end mb-8 border-b border-white/5 pb-12">
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 text-primary uppercase text-xs font-black tracking-[0.3em]">
-              <Activity size={16} className="animate-pulse" />
-              Real-time Summary
+        <header className="flex justify-between items-end mb-8 border-b border-white/5 pb-8">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-primary">Core Diagnostic</span>
             </div>
-            <h1 className="text-6xl md:text-7xl font-black italic tracking-tighter">Health <span className="text-white/20">Check.</span></h1>
+            <h1 className="text-4xl font-bold tracking-tight">Health <span className="text-white/40">Check.</span></h1>
           </div>
           <div className="text-right hidden sm:block">
-             <div className="text-xs font-bold uppercase tracking-[0.3em] text-white/30">User Session</div>
-             <div className="text-sm font-mono text-primary mt-1">HX-240721-BETA</div>
+             <div className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/20">Session Identity</div>
+             <div className="text-xs font-mono text-primary mt-1">HX-CORE-PROTOCOL</div>
           </div>
         </header>
 
         {/* Hero Resilience Score */}
         <section className="relative overflow-hidden group">
           <div className="absolute inset-0 bg-primary/5 blur-[120px] rounded-full -translate-y-1/2 pointer-events-none" />
-          <div className="bg-[#0A0A0A] border border-white/5 rounded-[4rem] p-16 lg:p-24 flex flex-col items-center justify-center text-center space-y-12 relative z-10">
-              <span className="text-sm font-black uppercase tracking-widest text-primary">Overall Health Score</span>
+          <div className="bg-[#0A0A0A] border border-white/5 rounded-[2.5rem] p-12 md:p-16 flex flex-col items-center justify-center text-center space-y-8 relative z-10">
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">Financial Resilience Index</span>
               
               <div className="relative">
-                <div className="absolute inset-0 bg-primary/20 blur-[80px] animate-pulse rounded-full" />
-                <div className="text-[8rem] md:text-[10rem] font-black italic tracking-tighter leading-none relative">
+                <div className="absolute inset-0 bg-primary/10 blur-[60px] animate-pulse rounded-full" />
+                <div className="text-7xl md:text-9xl font-black italic tracking-tighter leading-none relative">
                     {healthData.score}
-                    <span className="text-3xl md:text-4xl absolute top-0 -right-20 md:-right-24 text-primary opacity-50 not-italic">/ 100</span>
+                    <span className="text-2xl md:text-3xl absolute top-0 -right-16 md:-right-20 text-white/10 not-italic">/100</span>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center gap-6 mt-8">
-                  <div className="px-10 py-4 bg-primary text-black rounded-full font-black text-sm uppercase tracking-widest shadow-[0_20px_50px_rgba(16,185,129,0.3)]">
+              <div className="flex flex-col sm:flex-row items-center gap-6 mt-4">
+                  <div className="px-8 py-3 bg-primary text-black rounded-2xl font-black text-[10px] uppercase tracking-widest shadow-[0_10px_30px_rgba(16,185,129,0.2)]">
                       {healthData.status}
                   </div>
-                  <div className="text-lg font-medium text-white/60 italic">
-                    You are in the top <span className="text-white font-bold">{healthData.peerPercentile}%</span> of your age group.
-                  </div>
+                  {userData.health.score > 0 && (
+                    <div className="text-sm font-medium text-white/40 italic">
+                      Percentile Rank: <span className="text-white font-bold">{healthData.peerPercentile}%</span>
+                    </div>
+                  )}
               </div>
           </div>
         </section>
