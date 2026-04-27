@@ -50,13 +50,27 @@ export async function getUserProfile(userId) {
  */
 export async function saveBehavioralData(userId, behavioralData) {
   try {
+    const profile = await getUserProfile(userId);
+    const now = new Date();
+    const currentMonthStr = `${now.getFullYear()}-${now.getMonth()}`;
+    let takesThisMonth = profile?.behavioral?.takesThisMonth || 0;
+    let lastTakeMonthStr = profile?.behavioral?.lastTakeMonthStr || currentMonthStr;
+    
+    if (lastTakeMonthStr !== currentMonthStr) {
+      takesThisMonth = 1;
+    } else {
+      takesThisMonth += 1;
+    }
+
     const userRef = doc(db, 'users', userId);
     await updateDoc(userRef, {
       behavioral: {
         answers: behavioralData.answers,
         scores: behavioralData.scores,
         completed: true,
-        completedAt: serverTimestamp()
+        completedAt: serverTimestamp(),
+        lastTakeMonthStr: currentMonthStr,
+        takesThisMonth: takesThisMonth
       },
       updatedAt: serverTimestamp()
     });
@@ -98,6 +112,32 @@ export async function isBehavioralCompleted(userId) {
     return false;
   }
 }
+
+/**
+ * Check if the user is allowed to retake the behavioral assessment (limit 3 per month)
+ */
+export async function canRetakeBehavioral(userId) {
+  try {
+    const profile = await getUserProfile(userId);
+    const behavioral = profile?.behavioral;
+    if (!behavioral || !behavioral.completed) return true; // never taken
+    
+    const now = new Date();
+    const currentMonthStr = `${now.getFullYear()}-${now.getMonth()}`;
+    const lastTakeMonthStr = behavioral.lastTakeMonthStr;
+    const takesThisMonth = behavioral.takesThisMonth || 0;
+    
+    if (lastTakeMonthStr !== currentMonthStr) {
+      return true; // new month
+    }
+    
+    return takesThisMonth < 3;
+  } catch (error) {
+    console.error('Error checking retake limit:', error);
+    return false;
+  }
+}
+
 
 /**
  * Save health score data

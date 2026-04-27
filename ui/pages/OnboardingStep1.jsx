@@ -14,6 +14,17 @@ export default function OnboardingStep1() {
   const navigate = useNavigate();
   const { userData, updateUserData } = useUserData();
 
+  React.useEffect(() => {
+    const now = new Date();
+    const currentMonthStr = `${now.getFullYear()}-${now.getMonth()}`;
+    const lastTakeMonthStr = userData.behavioral?.lastTakeMonthStr;
+    const takesThisMonth = lastTakeMonthStr === currentMonthStr ? (userData.behavioral?.takesThisMonth || 0) : 0;
+    
+    if (takesThisMonth >= 3) {
+      navigate('/dashboard');
+    }
+  }, [userData, navigate]);
+
   const [payday, setPayday] = useState(userData.behavioral.answers.payday || '');
   const [weekend, setWeekend] = useState(userData.behavioral.answers.weekend || '');
   const [subs, setSubs] = useState(userData.behavioral.answers.subs || '');

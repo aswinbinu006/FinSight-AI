@@ -39,8 +39,15 @@ export default function Dashboard() {
 
   const healthBand = healthScore > 75 ? 'Sovereign' : (healthScore > 50 ? 'Tactical' : (healthScore > 0 ? 'Exposed' : 'Awaiting Audit'));
   const velocity = income > 0 ? ((income - wasteTotal) / income).toFixed(2) : "0.00";
-  const goalActive = userData.goal.target > 0;
-  const status = userData.behavioral.completed ? 'Synchronized' : 'Standby';
+  const goalActive = userData.goal?.target > 0;
+  const status = userData.behavioral?.completed ? 'Synchronized' : 'Standby';
+
+  // Calculate behavioral logic
+  const now = new Date();
+  const currentMonthStr = `${now.getFullYear()}-${now.getMonth()}`;
+  const lastTakeMonthStr = userData.behavioral?.lastTakeMonthStr;
+  const takesThisMonth = lastTakeMonthStr === currentMonthStr ? (userData.behavioral?.takesThisMonth || 0) : 0;
+  const limitReached = takesThisMonth >= 3;
 
   return (
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30 relative overflow-hidden">
@@ -164,6 +171,18 @@ export default function Dashboard() {
                             <p className="text-[8px] uppercase font-bold text-white/30 mb-1">Trajectory</p>
                             <p className="text-xs font-medium text-white/80">{healthScore > 0 ? "Projected: +4.2 points / 30d" : "Pending health intelligence scan."}</p>
                         </div>
+                    </div>
+
+                    <div className="pt-2 relative z-10 w-full mt-2">
+                        {limitReached ? (
+                          <div className="w-full text-center py-3 bg-white/5 text-white/40 text-[9px] uppercase tracking-[0.2em] font-black rounded-2xl border border-white/5 cursor-not-allowed">
+                            Limit Reached (3/3 this month)
+                          </div>
+                        ) : (
+                          <Link to="/onboarding/step1" className="block w-full text-center py-3 bg-primary/10 text-primary text-[9px] uppercase tracking-[0.2em] font-black rounded-2xl border border-primary/20 hover:bg-primary hover:text-black transition-all">
+                            Retake Behavioral Profile ({3 - takesThisMonth} left this month)
+                          </Link>
+                        )}
                     </div>
                 </div>
             </div>
