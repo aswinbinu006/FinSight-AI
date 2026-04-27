@@ -8,16 +8,19 @@ import { logout } from '../firebase/auth';
 import { useUserData } from '../context/UserDataContext';
 
 const Sidebar = () => {
-  const { userData, loading } = useUserData();
+  const context = useUserData();
+  const currentUserData = context?.userData;
+  const loading = context?.loading;
+  
   const location = useLocation();
   const navigate = useNavigate();
   
-  if (loading || !userData) return null;
+  if (loading || !currentUserData) return null;
 
   const navItems = [
     { to: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
     { 
-      to: userData.behavioral?.completed ? '/health/dashboard' : '/health', 
+      to: currentUserData.behavioral?.completed ? '/health/dashboard' : '/health', 
       icon: Activity, 
       label: 'Health' 
     },

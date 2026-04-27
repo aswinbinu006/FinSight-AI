@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../components/Sidebar';
-import { ShieldCheck, ShoppingBag, Landmark, Brain, Activity, TrendingUp, AlertTriangle, Sparkles } from 'lucide-react';
+import { ShieldCheck, ShoppingBag, Landmark, Brain, Activity, TrendingUp, AlertTriangle, Sparkles, Loader2 } from 'lucide-react';
 import { useUserData } from '../context/UserDataContext';
 import { formatINR } from '../utils';
 
 const HealthDashboard = () => {
-  const { userData } = useUserData();
+  const { userData, loading } = useUserData();
   const [healthData, setHealthData] = useState({
     score: 0,
     status: 'Analyzing...',

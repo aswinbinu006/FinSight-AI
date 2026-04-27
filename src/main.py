@@ -151,6 +151,7 @@ def send_welcome_alert(email: str, name: str):
 
 # --- ROUTES ---
 
+@app.get("/")
 @app.get("/status")
 async def get_status():
     return {
