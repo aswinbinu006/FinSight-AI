@@ -20,6 +20,14 @@ const HealthDashboard = () => {
     window.scrollTo(0, 0);
   }, []);
 
+  if (loading || !userData) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="animate-spin text-primary w-12 h-12" />
+      </div>
+    );
+  }
+
   useEffect(() => {
     const healthScore = userData.health.score || 0;
     
@@ -44,9 +52,9 @@ const HealthDashboard = () => {
 
   return (
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">
-      <Sidebar activePage="health" />
+      <Sidebar />
 
-      <main className="flex-1 ml-24 p-6 lg:p-10 space-y-6 pb-24">
+      <main className="flex-1 ml-24 p-6 lg:p-10 xl:p-12 space-y-10 pb-24">
         {/* Header */}
         <header className="flex justify-between items-end border-b border-white/5 pb-6">
           <div className="space-y-1">

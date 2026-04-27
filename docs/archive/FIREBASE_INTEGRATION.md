@@ -22,7 +22,7 @@ npm install firebase
 
 ### 2. Firebase Configuration
 The Firebase configuration is already set up in `ui/firebase/config.js`:
-- API Key: `AIzaSyDCj8YE3IF3ZY9xkJtbaMXqRNDKTA3ufKw`
+- API Key: `YOUR_FIREBASE_API_KEY_HERE`
 - Auth Domain: `finsight-ai-app.firebaseapp.com`
 - Project ID: `finsight-ai-app`
 
@@ -331,7 +331,7 @@ firebase deploy --only hosting
 
 ### Backend (.env)
 ```env
-GEMINI_API_KEY=AIzaSyD3Oi6hDjKIe0kC0rukgMk2eXYkFrUFUR8
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
 PORT=8000
 JWT_SECRET=1b6f3a0ea4eb03456405bc37c1854be607c158f106b2aa73bc6c8d9dd1efd579
 ```

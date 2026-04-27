@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Sidebar from '../components/Sidebar';
-import { Brain, Sparkles, Send, MoreVertical, ShieldCheck, Zap, TrendingUp, AlertCircle, Search, Loader2 } from 'lucide-react';
+import { Brain, Sparkles, Send, MoreVertical, ShieldCheck, Zap, TrendingUp, AlertCircle, Search, Loader2, Activity } from 'lucide-react';
 import { motion as Motion } from 'framer-motion';
 import { formatINR } from '../utils';
 import { useUserData } from '../context/UserDataContext';
@@ -9,21 +9,29 @@ export default function CopilotDashboard() {
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  const { userData } = useUserData();
+  const { userData, loading } = useUserData();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
+  if (loading || !userData) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="animate-spin text-primary w-12 h-12" />
+      </div>
+    );
+  }
+
   // Derive metrics from centralized context (Firestore-backed)
   const metrics = {
-    healthScore: userData.health.score || 0,
-    targetAmount: userData.goal.target || 0,
-    monthlySavings: userData.goal.monthlySavings || 0,
-    wasteAmount: userData.waste.totalWaste || 0,
-    income: userData.financial.income || 0,
-    behavioralCompleted: userData.behavioral.completed,
-    goalActive: userData.goal.active,
+    healthScore: userData.health?.score || 0,
+    targetAmount: userData.goal?.target || 0,
+    monthlySavings: userData.goal?.monthlySavings || 0,
+    wasteAmount: userData.waste?.totalWaste || 0,
+    income: userData.financial?.income || 0,
+    behavioralCompleted: userData.behavioral?.completed,
+    goalActive: userData.goal?.active,
   };
 
   const [messages, setMessages] = useState([
@@ -80,9 +88,9 @@ export default function CopilotDashboard() {
 
   return (
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">
-      <Sidebar activePage="copilot" />
+      <Sidebar />
 
-      <main className="flex-1 ml-24 p-6 lg:p-10 space-y-12 pb-24">
+      <main className="flex-1 ml-24 p-6 lg:p-10 xl:p-12 space-y-12 pb-24">
         {/* Header */}
         <header className="flex justify-between items-end border-b border-white/5 pb-10">
             <div className="space-y-2">

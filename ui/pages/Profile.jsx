@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import { 
   User, 
@@ -12,28 +12,36 @@ import {
   Sparkles,
   Lock,
   Smartphone,
-  Fingerprint
+  Fingerprint,
+  Loader2
 } from 'lucide-react';
-import { getCurrentUser } from '../firebase/auth';
 import { logout } from '../firebase/auth';
+import { useUserData } from '../context/UserDataContext';
+import { formatINR } from '../utils';
 
 export default function Profile() {
   const navigate = useNavigate();
-  const [firebaseUser, setFirebaseUser] = useState(null);
+  const { userData, loading, authUser } = useUserData();
 
   useEffect(() => {
-    const u = getCurrentUser();
-    if (!u) { navigate('/login'); return; }
-    setFirebaseUser(u);
-  }, [navigate]);
+    window.scrollTo(0, 0);
+  }, []);
+
+  if (loading || !userData || !authUser) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="animate-spin text-primary w-12 h-12" />
+      </div>
+    );
+  }
 
   const user = {
-    name: firebaseUser?.displayName || firebaseUser?.email?.split('@')[0] || "User",
-    email: firebaseUser?.email || "",
+    name: userData.displayName || userData.email?.split('@')[0] || "User",
+    email: userData.email || "",
     tier: "Pro Tier",
     role: "Wealth Architect",
-    id: `FIN-${(firebaseUser?.uid || '').substring(0, 8).toUpperCase()}`,
-    avatar: firebaseUser?.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${firebaseUser?.email || 'U'}&backgroundColor=10B981`
+    id: `FIN-${(userData.uid || '').substring(0, 8).toUpperCase()}`,
+    avatar: authUser.photoURL || `https://api.dicebear.com/7.x/initials/svg?seed=${userData.email || 'U'}&backgroundColor=10B981`
   };
 
   const handleLogout = async () => {

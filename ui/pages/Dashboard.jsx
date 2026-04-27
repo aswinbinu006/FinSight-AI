@@ -18,7 +18,7 @@ export default function Dashboard() {
     window.scrollTo(0, 0);
   }, []);
 
-  if (loading) {
+  if (loading || !userData) {
     return (
       <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="flex flex-col items-center gap-4">
@@ -30,9 +30,9 @@ export default function Dashboard() {
   }
 
   // Derive metrics from context data
-  const healthScore = userData.health.score || 0;
-  const income = userData.financial.income || 0;
-  const subscriptions = userData.waste.subscriptions || [];
+  const healthScore = userData.health?.score || 0;
+  const income = userData.financial?.income || 0;
+  const subscriptions = userData.waste?.subscriptions || [];
   const processedSubs = subscriptions.map(sub => {
     const monthlyCost = (sub.cycle === 'Yearly' || sub.cycle === 'Annual') ? sub.cost / 12 : sub.cost;
     const isWaste = sub.usage ? (sub.usage === 'Rarely' || sub.usage === 'Never') : (sub.cost > 500); 
@@ -61,9 +61,9 @@ export default function Dashboard() {
       <div className="absolute top-[-10%] right-[-10%] w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-10%] w-[500px] h-[500px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
 
-      <Sidebar />
+      <Sidebar activePage="health" />
 
-      <main className="flex-1 ml-24 p-8 lg:p-12 space-y-12 relative z-10">
+      <main className="flex-1 ml-24 p-6 lg:p-10 xl:p-12 space-y-10 pb-24 relative z-10">
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-1">
             <div className="flex items-center gap-2">

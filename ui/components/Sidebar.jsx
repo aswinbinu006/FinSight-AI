@@ -8,10 +8,12 @@ import { logout } from '../firebase/auth';
 import { useUserData } from '../context/UserDataContext';
 
 const Sidebar = () => {
-  const { userData } = useUserData();
+  const { userData, loading } = useUserData();
   const location = useLocation();
   const navigate = useNavigate();
   
+  if (loading || !userData) return null;
+
   const navItems = [
     { to: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
     { 
