@@ -8,17 +8,51 @@ import {
   Shield,
   BookOpen,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  Loader2
 } from 'lucide-react';
 
 export default function OnboardingStep3() {
   const navigate = useNavigate();
-  const { userData, updateUserData } = useUserData();
+  const { userData, updateUserData, loading, authUser } = useUserData();
 
-  const [social, setSocial] = useState(userData.behavioral.answers.social || '');
-  const [emergency, setEmergency] = useState(userData.behavioral.answers.emergency || '');
-  const [budget, setBudget] = useState(userData.behavioral.answers.future || '');
-  const [learning, setLearning] = useState(userData.behavioral.answers.learning || '');
+  // Redirect if not logged in and not loading
+  React.useEffect(() => {
+    if (!loading && !authUser) {
+      navigate('/login');
+    }
+  }, [loading, authUser, navigate]);
+
+  const [social, setSocial] = useState('');
+  const [emergency, setEmergency] = useState('');
+  const [budget, setBudget] = useState('');
+  const [learning, setLearning] = useState('');
+
+  // Scroll to top on mount
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Sync with context once loaded
+  React.useEffect(() => {
+    if (!loading && userData.behavioral?.answers) {
+      setSocial(userData.behavioral.answers.social || '');
+      setEmergency(userData.behavioral.answers.emergency || '');
+      setBudget(userData.behavioral.answers.future || '');
+      setLearning(userData.behavioral.answers.learning || '');
+    }
+  }, [loading, userData.behavioral?.answers]);
+
+  if (loading || !authUser) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="animate-spin text-primary w-12 h-12" />
+          <p className="text-[10px] uppercase font-bold tracking-[0.4em] text-primary animate-pulse">Syncing Resilience...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleNext = async () => {
     await updateUserData('behavioral.answers.social', social);

@@ -7,14 +7,25 @@ import {
   HeartPulse,
   Calendar,
   CreditCard,
-  Sparkles
+  Sparkles,
+  Loader2
 } from 'lucide-react';
 
 export default function OnboardingStep1() {
   const navigate = useNavigate();
-  const { userData, updateUserData } = useUserData();
+  const { userData, updateUserData, loading, authUser } = useUserData();
 
+  // Redirect if not logged in and not loading
   React.useEffect(() => {
+    if (!loading && !authUser) {
+      navigate('/login');
+    }
+  }, [loading, authUser, navigate]);
+
+  // Restrict to 3 takes per month
+  React.useEffect(() => {
+    if (loading) return;
+
     const now = new Date();
     const currentMonthStr = `${now.getFullYear()}-${now.getMonth()}`;
     const lastTakeMonthStr = userData.behavioral?.lastTakeMonthStr;
@@ -23,11 +34,36 @@ export default function OnboardingStep1() {
     if (takesThisMonth >= 3) {
       navigate('/dashboard');
     }
-  }, [userData, navigate]);
+  }, [userData, loading, navigate]);
 
-  const [payday, setPayday] = useState(userData.behavioral.answers.payday || '');
-  const [weekend, setWeekend] = useState(userData.behavioral.answers.weekend || '');
-  const [subs, setSubs] = useState(userData.behavioral.answers.subs || '');
+  // Initialize local state from userData when it finishes loading
+  const [payday, setPayday] = useState('');
+  const [weekend, setWeekend] = useState('');
+  const [subs, setSubs] = useState('');
+
+  // Scroll to top on mount
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  React.useEffect(() => {
+    if (!loading && userData.behavioral?.answers) {
+      setPayday(userData.behavioral.answers.payday || '');
+      setWeekend(userData.behavioral.answers.weekend || '');
+      setSubs(userData.behavioral.answers.subs || '');
+    }
+  }, [loading, userData.behavioral?.answers]);
+
+  if (loading || !authUser) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="animate-spin text-primary w-12 h-12" />
+          <p className="text-[10px] uppercase font-bold tracking-[0.4em] text-primary animate-pulse">Syncing Habits...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleNext = async () => {
     await updateUserData('behavioral.answers.payday', payday);

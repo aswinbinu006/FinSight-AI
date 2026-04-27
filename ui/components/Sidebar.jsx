@@ -12,10 +12,14 @@ const Sidebar = () => {
   
   const navItems = [
     { to: '/dashboard', icon: LayoutGrid, label: 'Dashboard' },
-    { to: '/health', icon: Activity, label: 'Health' },
+    { 
+      to: userData.behavioral?.completed ? '/health/dashboard' : '/health', 
+      icon: Activity, 
+      label: 'Health' 
+    },
     { to: '/waste', icon: Zap, label: 'Waste' },
     { to: '/goals', icon: Target, label: 'Goals' },
-    { to: '/copilot', icon: Brain, label: 'Co-Pilot' },
+    { to: '/copilot/dashboard', icon: Brain, label: 'Co-Pilot' },
     { to: '/settings', icon: Settings, label: 'Settings' },
   ];
 

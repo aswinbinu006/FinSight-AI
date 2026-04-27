@@ -287,14 +287,29 @@ export default function Dashboard() {
                     </div>
 
                     <div className="space-y-4 relative z-10 flex-1">
-                        <div className="bg-white/5 p-4 rounded-2xl space-y-2 border border-white/5 hover:border-primary/20 hover:bg-white/10 transition-all cursor-pointer group">
-                            <span className="text-[9px] uppercase font-black text-red-400 tracking-widest">Anomaly</span>
-                            <p className="text-xs text-white/70 leading-relaxed font-medium">Duplicate subscription detected. Audit recommended.</p>
-                        </div>
-                        <div className="bg-white/5 p-4 rounded-2xl space-y-2 border border-white/5 hover:border-primary/20 hover:bg-white/10 transition-all cursor-pointer group">
-                            <span className="text-[9px] uppercase font-black text-primary tracking-widest">Opportunity</span>
-                            <p className="text-xs text-white/70 leading-relaxed font-medium">Shift 5% of monthly waste to your goal to save 3 months.</p>
-                        </div>
+                        {wasteSubs.length > 0 ? (
+                            <div className="bg-white/5 p-4 rounded-2xl space-y-2 border border-white/5 hover:border-red-500/20 hover:bg-white/10 transition-all cursor-pointer group">
+                                <span className="text-[9px] uppercase font-black text-red-400 tracking-widest">Anomaly</span>
+                                <p className="text-xs text-white/70 leading-relaxed font-medium">{wasteSubs.length} leakage items detected. Start recovery at Waste panel.</p>
+                            </div>
+                        ) : (
+                            <div className="bg-white/5 p-4 rounded-2xl space-y-2 border border-white/5 transition-all cursor-default">
+                                <span className="text-[9px] uppercase font-black text-primary tracking-widest">Status</span>
+                                <p className="text-xs text-white/40 leading-relaxed font-medium">No leakage anomalies detected in your current profile.</p>
+                            </div>
+                        )}
+                        
+                        {goalActive ? (
+                            <div className="bg-white/5 p-4 rounded-2xl space-y-2 border border-white/5 hover:border-primary/20 hover:bg-white/10 transition-all cursor-pointer group">
+                                <span className="text-[9px] uppercase font-black text-primary tracking-widest">Opportunity</span>
+                                <p className="text-xs text-white/70 leading-relaxed font-medium">Optimize your {userData.goal.type} horizon by reallocating {wasteTotal > 0 ? 'waste leakage' : 'idle cash'}.</p>
+                            </div>
+                        ) : (
+                            <div className="bg-white/5 p-4 rounded-2xl space-y-2 border border-white/5 transition-all cursor-default">
+                                <span className="text-[9px] uppercase font-black text-white/20 tracking-widest">Strategy</span>
+                                <p className="text-xs text-white/40 leading-relaxed font-medium">Configure a financial target to unlock success probability modeling.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

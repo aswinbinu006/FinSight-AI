@@ -213,15 +213,17 @@ export default function WasteMonthly() {
                         ))}
                     </div>
 
+                    {userData.waste.totalWaste > 0 && (
                     <div className="bg-gradient-to-br from-primary to-primary-dark p-8 rounded-[2rem] text-black space-y-6 relative overflow-hidden group">
                         <div className="relative z-10 space-y-4">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-black/60">Premium Directive</span>
-                            <p className="text-lg font-black leading-tight italic">Detect dual-linked shadow nodes across accounts.</p>
+                            <span className="text-[10px] font-black uppercase tracking-widest text-black/60">Intelligence Sync</span>
+                            <p className="text-lg font-black leading-tight italic">Consolidate these {userData.waste.subscriptions.filter(s => s.isWaste).length} leaks to recover ₹{formatINR(userData.waste.totalWaste)} instantly.</p>
                             <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] border-b-2 border-black/20 pb-1">
                                 Command Co-Pilot <ArrowRight size={14} />
                             </button>
                         </div>
                     </div>
+                    )}
 
                     <button className="w-full py-4 text-[10px] font-black uppercase tracking-widest text-white/20 hover:text-white transition-all flex items-center justify-center gap-2 border border-white/5 rounded-2xl">
                          <Download size={14} /> DOWNLOAD AUDIT.pdf

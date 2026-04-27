@@ -67,12 +67,12 @@ export default function CopilotIntro() {
 
             {/* Action Zone */}
             <div className="flex flex-col items-center gap-8">
-                <button className="group relative px-24 py-6 bg-primary text-black rounded-[2rem] font-black text-[12px] uppercase tracking-[0.3em] overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary/20 shadow-[0_0_60px_rgba(16,185,129,0.1)]">
+                <Link to="/copilot/dashboard" className="group relative px-24 py-6 bg-primary text-black rounded-[2rem] font-black text-[12px] uppercase tracking-[0.3em] overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-primary/20 shadow-[0_0_60px_rgba(16,185,129,0.1)]">
                     <span className="relative z-10 flex items-center gap-3">
-                        Upgrade To Enterprise <ChevronRight size={20}/>
+                        Unlock Neural Co-Pilot <ChevronRight size={20}/>
                     </span>
                     <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500" />
-                </button>
+                </Link>
                 <div className="flex items-center gap-2 text-white/20 text-[9px] font-black uppercase tracking-[0.3em] italic">
                     <Sparkles size={12} className="text-primary" />
                     Pinnacle Tier Membership

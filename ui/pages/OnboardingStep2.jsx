@@ -7,16 +7,49 @@ import {
   ShoppingBag,
   Target,
   HeartPulse,
-  Sparkles
+  Sparkles,
+  Loader2
 } from 'lucide-react';
 
 export default function OnboardingStep2() {
   const navigate = useNavigate();
-  const { userData, updateUserData } = useUserData();
+  const { userData, updateUserData, loading: contextLoading, authUser } = useUserData();
 
-  const [impulse, setImpulse] = useState(userData.behavioral.answers.impulse || '');
-  const [goalComp, setGoalComp] = useState(userData.behavioral.answers.goal || '');
-  const [stress, setStress] = useState(userData.behavioral.answers.stress || '');
+  // Redirect if not logged in and not loading
+  React.useEffect(() => {
+    if (!contextLoading && !authUser) {
+      navigate('/login');
+    }
+  }, [contextLoading, authUser, navigate]);
+
+  const [impulse, setImpulse] = useState('');
+  const [goalComp, setGoalComp] = useState('');
+  const [stress, setStress] = useState('');
+
+  // Scroll to top on mount
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Sync with context once loaded
+  React.useEffect(() => {
+    if (!contextLoading && userData.behavioral?.answers) {
+      setImpulse(userData.behavioral.answers.impulse || '');
+      setGoalComp(userData.behavioral.answers.goal || '');
+      setStress(userData.behavioral.answers.stress || '');
+    }
+  }, [contextLoading, userData.behavioral?.answers]);
+
+  if (contextLoading || !authUser) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="animate-spin text-primary w-12 h-12" />
+          <p className="text-[10px] uppercase font-bold tracking-[0.4em] text-primary animate-pulse">Syncing Psychology...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleNext = async () => {
     await updateUserData('behavioral.answers.impulse', impulse);

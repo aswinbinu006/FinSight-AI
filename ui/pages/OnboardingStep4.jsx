@@ -3,16 +3,47 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronRight, ArrowLeft, Wand2, Calculator, IndianRupee, Loader2, CheckCircle2 } from 'lucide-react';
 import { scoreBehavioralAnswers } from '../services/behavioralService';
 import { useUserData } from '../context/UserDataContext';
-import { auth } from '../firebase/auth';
+import { auth } from '../firebase/config';
 
 export default function OnboardingStep4() {
   const navigate = useNavigate();
-  const { userData, updateUserDataBatch } = useUserData();
+  const { userData, updateUserDataBatch, loading: contextLoading, authUser } = useUserData();
 
-  const [income, setIncome] = useState(userData.financial.income || '');
-  const [emi, setEmi] = useState(userData.financial.emi || '');
+  // Redirect if not logged in and not loading
+  React.useEffect(() => {
+    if (!contextLoading && !authUser) {
+      navigate('/login');
+    }
+  }, [contextLoading, authUser, navigate]);
+
+  const [income, setIncome] = useState('');
+  const [emi, setEmi] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Scroll to top on mount
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  // Sync with context once loaded
+  React.useEffect(() => {
+    if (!contextLoading && userData.financial) {
+      setIncome(userData.financial.income || '');
+      setEmi(userData.financial.emi || '');
+    }
+  }, [contextLoading, userData.financial]);
+
+  if (contextLoading || !authUser) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="animate-spin text-primary w-12 h-12" />
+          <p className="text-[10px] uppercase font-bold tracking-[0.4em] text-primary animate-pulse">Finalizing Profile...</p>
+        </div>
+      </div>
+    );
+  }
 
   const formatINR = (val) => {
     if (!val) return '';

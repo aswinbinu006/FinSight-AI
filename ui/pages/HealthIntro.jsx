@@ -15,8 +15,16 @@ import {
 } from 'lucide-react';
 
 export default function HealthIntro() {
+  const navigate = useNavigate();
   const { userData } = useUserData();
   const isOnboarded = userData.behavioral.completed;
+
+  // Auto-redirect if already onboarded
+  React.useEffect(() => {
+    if (isOnboarded) {
+      navigate('/health/dashboard');
+    }
+  }, [isOnboarded, navigate]);
 
   return (
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">

@@ -15,49 +15,7 @@ import {
 } from 'lucide-react';
 
 export default function Notifications() {
-  const alerts = [
-    {
-      id: 1,
-      type: 'Health',
-      title: 'High Spending Detected',
-      desc: 'AI analysis identifies a 24% increase in discretionary spending compared to your 3-month rolling average in the \'Dining & Luxury\' sector.',
-      time: '2 minutes ago',
-      icon: <Activity className="text-primary" size={20} />,
-      bgColor: 'bg-primary/10',
-      tag: 'RESILIENCE DRIFT'
-    },
-    {
-      id: 2,
-      type: 'Waste',
-      title: 'Subscription Waste Found',
-      desc: 'Detected 3 overlapping premium data subscriptions with identical feature sets. Consolidating these could save ₹14,200/year.',
-      time: '1 hour ago',
-      icon: <Trash2 className="text-yellow-500" size={20} />,
-      bgColor: 'bg-yellow-500/10',
-      tag: 'CAPITAL LEAKAGE'
-    },
-    {
-      id: 3,
-      type: 'Goal Risk',
-      title: 'Goal at Risk',
-      desc: 'Your \'Q4 Liquidity Reserve\' target of ₹2.5M is currently 12% behind schedule due to market volatility in primary assets.',
-      time: '5 hours ago',
-      icon: <ShieldAlert className="text-red-500" size={20} />,
-      bgColor: 'bg-red-500/10',
-      tag: 'TRAJECTORY ANOMALY'
-    },
-    {
-      id: 4,
-      type: 'History',
-      title: 'Portfolio Rebalancing Completed',
-      desc: 'The AI has finished executing 12 trades to realign your Premium growth fund with the target risk profile of 7.2.',
-      time: '2 days ago',
-      icon: <History className="text-white/20" size={20} />,
-      bgColor: 'bg-white/5',
-      tag: 'SYSTEM ACTION',
-      archived: true
-    }
-  ];
+  const alerts = [];
 
   return (
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">
@@ -79,7 +37,7 @@ export default function Notifications() {
         </header>
 
         <div className="space-y-4">
-             {alerts.map((alert) => (
+             {alerts.length > 0 ? alerts.map((alert) => (
                 <article 
                     key={alert.id} 
                     className={`bg-[#0A0A0A] border border-white/5 rounded-[2.5rem] p-8 flex items-start gap-8 hover:bg-white/[0.04] hover:border-white/10 transition-all group ${alert.archived ? 'opacity-40 grayscale' : ''}`}
@@ -116,7 +74,12 @@ export default function Notifications() {
                         )}
                     </div>
                 </article>
-             ))}
+             )) : (
+                <div className="py-24 text-center space-y-4 bg-[#0A0A0A] border border-dashed border-white/10 rounded-[3rem]">
+                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-white/20">No active intelligence alerts.</p>
+                    <p className="text-xs text-white/10 max-w-xs mx-auto">Your neural link is active. We will notify you of any trajectory anomalies or capital leakage.</p>
+                </div>
+             )}
         </div>
 
         {/* Floating System Summary */}

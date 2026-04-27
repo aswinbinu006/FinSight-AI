@@ -98,7 +98,7 @@ export default function CopilotDashboard() {
         <div className="grid grid-cols-12 gap-12">
             {/* Analytics Sidebar for Context */}
             <div className="col-span-12 lg:col-span-8 space-y-10">
-                {/* Critical Diagnosis Card */}
+                {userData.waste?.subscriptions?.filter(s => s.isWaste)?.length > 0 && (
                 <section className="bg-[#0A0A0A] border border-primary/20 rounded-[3rem] p-12 relative overflow-hidden group shadow-2xl">
                     <div className="relative z-10 space-y-6">
                         <div className="flex items-center gap-2 text-primary">
@@ -109,11 +109,30 @@ export default function CopilotDashboard() {
                             Subscription waste is directly killing your <span className="text-primary italic">savings goals.</span>
                         </h2>
                         <p className="text-white/40 text-sm max-w-xl font-medium leading-relaxed uppercase tracking-widest">
-                            Executing recovery protocol on 4 flagged nodes will increase liquidity by <span className="text-white font-black italic">₹1,945/month</span>.
+                            Executing recovery protocol on {userData.waste.subscriptions.filter(s => s.isWaste).length} flagged nodes will increase liquidity by <span className="text-white font-black italic">₹{formatINR(userData.waste.totalWaste)}/month</span>.
                         </p>
                     </div>
                     <div className="absolute -right-20 -top-20 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[80px]" />
                 </section>
+                )}
+
+                {/* Default directive if no waste but active goals */}
+                {(!userData.waste?.subscriptions?.filter(s => s.isWaste)?.length) && userData.goals?.active && (
+                    <section className="bg-[#0A0A0A] border border-white/5 rounded-[3rem] p-12 relative overflow-hidden group">
+                        <div className="relative z-10 space-y-6">
+                            <div className="flex items-center gap-2 text-white/40">
+                                <Activity size={16} />
+                                <span className="text-[10px] font-black uppercase tracking-[0.4em]">Trajectory Optimized</span>
+                            </div>
+                            <h2 className="text-4xl font-black italic tracking-tighter leading-tight">
+                                Your <span className="text-primary italic">{userData.goals.target} goal</span> is on a high-velocity path.
+                            </h2>
+                            <p className="text-white/40 text-sm max-w-xl font-medium leading-relaxed uppercase tracking-widest">
+                                No critical leakage detected. Maintaining current savings rate will ensure completion by <span className="text-white font-black italic">{userData.goals.deadline}</span>.
+                            </p>
+                        </div>
+                    </section>
+                )}
 
                 {/* Priority Intel Grid */}
                 <div className="grid grid-cols-3 gap-6">
