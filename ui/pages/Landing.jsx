@@ -542,7 +542,7 @@ export default function Landing() {
             {user ? (
               <div className="flex items-center gap-4">
                 <span className="text-[10px] uppercase tracking-[0.1em] font-bold text-white/60 hidden sm:block">
-                  {user.displayName || user.email?.split('@')[0]}
+                  {user.displayName || (user.email || '').split('@')[0] || 'User'}
                 </span>
                 <Link to="/dashboard" className="flex items-center justify-center px-7 py-2.5 rounded-full bg-[#10B981] text-[#000000] text-[10px] font-bold uppercase tracking-[0.15em] shadow-[0_5px_15px_rgba(16,185,129,0.2)] hover:shadow-[0_10px_25px_rgba(16,185,129,0.3)] hover:scale-105 active:scale-95 transition-all">
                   Dashboard

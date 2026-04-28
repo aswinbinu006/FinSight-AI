@@ -36,7 +36,7 @@ export default function Profile() {
   }
 
   const user = {
-    name: userData.displayName || userData.email?.split('@')[0] || "User",
+    name: userData.displayName || (userData.email || '').split('@')[0] || "User",
     email: userData.email || "",
     tier: "Pro Tier",
     role: "Wealth Architect",

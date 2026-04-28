@@ -29,7 +29,7 @@ export default function SubscriptionInput() {
 
   const persistSubs = (updatedSubs) => {
     setSubscriptions(updatedSubs);
-    updateUserData({ waste: { subscriptions: updatedSubs } });
+    updateUserDataBatch({ waste: { subscriptions: updatedSubs } });
   };
 
   const addSubscription = () => {
