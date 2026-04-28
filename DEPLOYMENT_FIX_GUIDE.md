@@ -20,7 +20,7 @@
 
 1. **Environment Variables** - Ensure these are set in Render dashboard:
    ```
-   GEMINI_API_KEY=AIzaSyD3Oi6hDjKIe0kC0rukgMk2eXYkFrUFUR8
+   GEMINI_API_KEY=
    JWT_SECRET=1b6f3a0ea4eb03456405bc37c1854be607c158f106b2aa73bc6c8d9dd1efd579
    PORT=8000
    LOG_LEVEL=INFO
