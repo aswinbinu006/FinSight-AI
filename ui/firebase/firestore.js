@@ -12,37 +12,72 @@ import {
 import { db } from './config';
 
 /**
- * Save user profile data to Firestore
+ * Save user profile data to Firestore with retry logic
  */
 export async function saveUserProfile(userId, profileData) {
-  try {
-    const userRef = doc(db, 'users', userId);
-    await setDoc(userRef, {
-      ...profileData,
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-  } catch (error) {
-    console.error('Error saving user profile:', error);
-    throw error;
+  const maxRetries = 3;
+  let lastError = null;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const userRef = doc(db, 'users', userId);
+      await setDoc(userRef, {
+        ...profileData,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+      return; // Success
+    } catch (error) {
+      lastError = error;
+      console.error(`Error saving user profile (attempt ${attempt + 1}/${maxRetries}):`, error);
+      
+      // Don't retry on permission errors
+      if (error.code === 'permission-denied') {
+        throw error;
+      }
+      
+      // Wait before retrying
+      if (attempt < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+      }
+    }
   }
+  
+  throw lastError || new Error('Failed to save user profile');
 }
 
 /**
- * Get user profile data from Firestore
+ * Get user profile data from Firestore with retry logic
  */
 export async function getUserProfile(userId) {
-  try {
-    const userRef = doc(db, 'users', userId);
-    const userSnap = await getDoc(userRef);
-    
-    if (userSnap.exists()) {
-      return userSnap.data();
+  const maxRetries = 3;
+  let lastError = null;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const userRef = doc(db, 'users', userId);
+      const userSnap = await getDoc(userRef);
+      
+      if (userSnap.exists()) {
+        return userSnap.data();
+      }
+      return null;
+    } catch (error) {
+      lastError = error;
+      console.error(`Error getting user profile (attempt ${attempt + 1}/${maxRetries}):`, error);
+      
+      // Don't retry on permission errors
+      if (error.code === 'permission-denied') {
+        throw error;
+      }
+      
+      // Wait before retrying
+      if (attempt < maxRetries - 1) {
+        await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+      }
     }
-    return null;
-  } catch (error) {
-    console.error('Error getting user profile:', error);
-    throw error;
   }
+  
+  throw lastError || new Error('Failed to get user profile');
 }
 
 /**

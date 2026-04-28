@@ -75,6 +75,7 @@ export function UserDataProvider({ children }) {
   const [userData, setUserData] = useState(DEFAULT_STATE);
   const [loading, setLoading] = useState(true);
   const [authUser, setAuthUser] = useState(null);
+  const [error, setError] = useState(null);
 
   // ─── Auth listener: when user logs in, hydrate state from Firestore ────
   useEffect(() => {
@@ -83,26 +84,40 @@ export function UserDataProvider({ children }) {
         setUserData(DEFAULT_STATE);
         setAuthUser(null);
         setLoading(false);
+        setError(null);
         return;
       }
 
       setAuthUser(firebaseUser);
+      setError(null);
 
       try {
         const profile = await getUserProfile(firebaseUser.uid);
         if (profile) {
           setUserData(prev => mergeProfile(prev, profile, firebaseUser));
         } else {
-          // First-time user — set basics
-          setUserData(prev => ({
-            ...prev,
+          // First-time user — set basics and initialize document
+          const initialData = {
             uid: firebaseUser.uid,
             email: firebaseUser.email || '',
             displayName: firebaseUser.displayName || '',
-          }));
+          };
+          setUserData(prev => ({ ...prev, ...initialData }));
+          
+          // Initialize Firestore document for new user
+          try {
+            await saveUserProfile(firebaseUser.uid, {
+              email: firebaseUser.email,
+              displayName: firebaseUser.displayName,
+              behavioral: { completed: false }
+            });
+          } catch (initErr) {
+            console.warn('[UserDataContext] Failed to initialize user document:', initErr);
+          }
         }
       } catch (err) {
         console.error('[UserDataContext] Hydration error:', err);
+        setError(err.message || 'Failed to load user data');
         // Still set uid so navigation works
         setUserData(prev => ({
           ...prev,
@@ -181,9 +196,31 @@ export function UserDataProvider({ children }) {
     userData,
     loading,
     authUser,
+    error,
     updateUserData,
     updateUserDataBatch,
   };
+
+  // Show error screen if critical error occurs
+  if (error && !loading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center p-6">
+        <div className="max-w-md text-center space-y-4">
+          <div className="w-16 h-16 mx-auto rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+            <span className="text-2xl">⚠️</span>
+          </div>
+          <h2 className="text-xl font-bold">Connection Error</h2>
+          <p className="text-sm text-white/60">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="px-6 py-3 bg-primary text-black rounded-xl font-bold text-sm hover:scale-105 transition-transform"
+          >
+            Retry Connection
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <UserDataContext.Provider value={value}>

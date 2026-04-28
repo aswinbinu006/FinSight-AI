@@ -20,15 +20,9 @@ const HealthDashboard = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  if (loading || !userData) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <Loader2 className="animate-spin text-primary w-12 h-12" />
-      </div>
-    );
-  }
-
   useEffect(() => {
+    if (loading || !userData) return;
+
     const healthScore = userData.health.score || 0;
     
     let band = healthScore > 75 ? 'Sovereign' : (healthScore > 50 ? 'Tactical' : (healthScore > 0 ? 'Exposed' : 'Awaiting Audit'));
@@ -48,7 +42,15 @@ const HealthDashboard = () => {
         ? userData.health.explanation || `"Your financial baseline is ${band.toLowerCase()}. We recommend focusing on ${primaryWaste ? 'identifying leaking subscriptions' : 'automating your savings trajectory'}.`
         : "Complete your behavioral profile to unlock AI-driven financial health insights."
     });
-  }, [userData]);
+  }, [userData, loading]);
+
+  if (loading || !userData) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="animate-spin text-primary w-12 h-12" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-white flex font-body selection:bg-primary/30">

@@ -15,23 +15,15 @@ export default function CopilotDashboard() {
     window.scrollTo(0, 0);
   }, []);
 
-  if (loading || !userData) {
-    return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
-        <Loader2 className="animate-spin text-primary w-12 h-12" />
-      </div>
-    );
-  }
-
   // Derive metrics from centralized context (Firestore-backed)
   const metrics = {
-    healthScore: userData.health?.score || 0,
-    targetAmount: userData.goal?.target || 0,
-    monthlySavings: userData.goal?.monthlySavings || 0,
-    wasteAmount: userData.waste?.totalWaste || 0,
-    income: userData.financial?.income || 0,
-    behavioralCompleted: userData.behavioral?.completed,
-    goalActive: userData.goal?.active,
+    healthScore: userData?.health?.score || 0,
+    targetAmount: userData?.goal?.target || 0,
+    monthlySavings: userData?.goal?.monthlySavings || 0,
+    wasteAmount: userData?.waste?.totalWaste || 0,
+    income: userData?.financial?.income || 0,
+    behavioralCompleted: userData?.behavioral?.completed,
+    goalActive: userData?.goal?.active,
   };
 
   const [messages, setMessages] = useState([
@@ -45,6 +37,14 @@ export default function CopilotDashboard() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, isTyping]);
+
+  if (loading || !userData) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="animate-spin text-primary w-12 h-12" />
+      </div>
+    );
+  }
 
   const handleSend = (overrideText = null) => {
       const textToProcess = overrideText || inputText;
@@ -255,7 +255,7 @@ export default function CopilotDashboard() {
                               type="text" 
                               value={inputText}
                               onChange={(e) => setInputText(e.target.value)}
-                              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+                              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                               placeholder="Ask anything..." 
                               className="w-full bg-white/5 border border-white/5 rounded-2xl py-4 pl-6 pr-14 text-xs font-medium focus:outline-none focus:border-primary/40 focus:bg-white/10 transition-all placeholder:text-white/10"
                             />

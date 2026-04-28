@@ -1,14 +1,21 @@
+# FinSight AI — Production Backend Dependencies
+# ================================================
+# Core
 fastapi==0.104.1
 uvicorn[standard]==0.24.0
 pydantic==2.5.0
 python-dotenv==1.0.0
-python-multipart==0.0.6
-passlib[bcrypt]==1.7.4
-psycopg2-binary==2.9.9
-PyJWT==2.8.0
+
+# Auth (Firebase ID token verification via public certs)
+PyJWT[crypto]==2.8.0
+cryptography>=41.0.0
+
+# ML Pipeline
 xgboost==2.0.3
 scikit-learn==1.3.2
 pandas==2.1.3
 numpy==1.26.2
 joblib==1.3.2
+
+# AI (Gemini API for behavioral scoring)
 google-generativeai==0.3.1

@@ -30,3 +30,7 @@ __pycache__/
 *.db
 .firebaserc
 **/.kiro/
+
+# ML Model Artifacts (regenerate with: python -m finsight_models_production.train_and_save_models)
+*.pkl
+saved_models/

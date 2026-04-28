@@ -1,7 +1,12 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate } from 'react-router-dom';
+import { lazy, Suspense, useEffect, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
-import { UserDataProvider } from './context/UserDataContext';
+import { UserDataProvider, useUserData } from './context/UserDataContext';
+import ErrorBoundary from './components/ErrorBoundary';
+import BackendConnectionPopup from './components/BackendConnectionPopup';
+import PrivateRoute from './components/PrivateRoute';
+import { auth } from './firebase/config';
+import { logout } from './firebase/auth';
 
 // Loading fallback
 const LoadingScreen = () => (
@@ -57,7 +62,6 @@ const Error404 = lazy(() => import('./pages/Error404'));
 const Error500 = lazy(() => import('./pages/Error500'));
 const NetworkError = lazy(() => import('./pages/NetworkError'));
 
-import { useEffect } from 'react';
 import Lenis from 'lenis';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -95,61 +99,131 @@ function ScrollManager() {
   return null;
 }
 
+/**
+ * SessionGuard — 24-hour auto-logout
+ * ====================================
+ * Checks the Firebase auth_time claim every 60 seconds.
+ * If the user's session is older than 24 hours, automatically logs out
+ * and redirects to /login.
+ * 
+ * This lives inside BrowserRouter so it has access to useNavigate.
+ */
+const SESSION_MAX_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+function SessionGuard() {
+  const navigate = useNavigate();
+
+  const checkSession = useCallback(async () => {
+    const user = auth.currentUser;
+    if (!user) return;
+
+    try {
+      const tokenResult = await user.getIdTokenResult();
+      const authTime = new Date(tokenResult.claims.auth_time * 1000);
+      const now = Date.now();
+      const sessionAge = now - authTime.getTime();
+
+      if (sessionAge > SESSION_MAX_AGE_MS) {
+        console.warn('[SessionGuard] 24h session expired, logging out...');
+        await logout();
+        navigate('/login', { replace: true });
+      }
+    } catch (err) {
+      // Token might not have auth_time, or user is signed out — ignore
+      console.warn('[SessionGuard] Check failed:', err.message);
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    // Check immediately on mount
+    checkSession();
+
+    // Check every 60 seconds
+    const interval = setInterval(checkSession, 60000);
+
+    // Also check when the tab becomes visible (user returns from background)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkSession();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [checkSession]);
+
+  return null;
+}
+
+/**
+ * P — shorthand wrapper for PrivateRoute
+ * Keeps the JSX below clean and readable.
+ */
+const P = ({ children }) => <PrivateRoute>{children}</PrivateRoute>;
+
 function App() {
   return (
-    <UserDataProvider>
-    <BrowserRouter>
-      <ScrollManager />
-      <Suspense fallback={<LoadingScreen />}>
-        <Routes>
-          {/* Public Pages */}
+    <ErrorBoundary>
+      <UserDataProvider>
+        <BrowserRouter>
+          <BackendConnectionPopup />
+          <SessionGuard />
+          <ScrollManager />
+          <Suspense fallback={<LoadingScreen />}>
+            <Routes>
+          {/* ─── Public Pages (no auth required) ─── */}
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
+          {/* ─── Protected Pages (require Firebase auth) ─── */}
+
           {/* Onboarding Flow */}
-          <Route path="/onboarding/step1" element={<OnboardingStep1 />} />
-          <Route path="/onboarding/step2" element={<OnboardingStep2 />} />
-          <Route path="/onboarding/step3" element={<OnboardingStep3 />} />
-          <Route path="/onboarding/step4" element={<OnboardingStep4 />} />
+          <Route path="/onboarding/step1" element={<P><OnboardingStep1 /></P>} />
+          <Route path="/onboarding/step2" element={<P><OnboardingStep2 /></P>} />
+          <Route path="/onboarding/step3" element={<P><OnboardingStep3 /></P>} />
+          <Route path="/onboarding/step4" element={<P><OnboardingStep4 /></P>} />
 
           {/* Dashboard */}
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<P><Dashboard /></P>} />
 
           {/* Financial Health */}
-          <Route path="/health" element={<HealthIntro />} />
-          <Route path="/health/dashboard" element={<HealthDashboard />} />
+          <Route path="/health" element={<P><HealthIntro /></P>} />
+          <Route path="/health/dashboard" element={<P><HealthDashboard /></P>} />
 
           {/* Waste Recovery */}
-          <Route path="/waste" element={<WasteIntro />} />
-          <Route path="/waste/monthly" element={<WasteMonthly />} />
-          <Route path="/waste/yearly" element={<WasteYearly />} />
+          <Route path="/waste" element={<P><WasteIntro /></P>} />
+          <Route path="/waste/monthly" element={<P><WasteMonthly /></P>} />
+          <Route path="/waste/yearly" element={<P><WasteYearly /></P>} />
 
           {/* Subscriptions */}
-          <Route path="/subscriptions/add" element={<SubscriptionInput />} />
-          <Route path="/subscriptions/plans" element={<SubscriptionPlans />} />
+          <Route path="/subscriptions/add" element={<P><SubscriptionInput /></P>} />
+          <Route path="/subscriptions/plans" element={<P><SubscriptionPlans /></P>} />
 
           {/* Goal Intelligence */}
-          <Route path="/goals" element={<GoalIntro />} />
-          <Route path="/goals/step1" element={<GoalStep1 />} />
-          <Route path="/goals/step2" element={<GoalStep2 />} />
-          <Route path="/goals/step3" element={<GoalStep3 />} />
-          <Route path="/goals/step4" element={<GoalStep4 />} />
-          <Route path="/goals/step5" element={<GoalStep5 />} />
-          <Route path="/goals/result" element={<GoalResult />} />
+          <Route path="/goals" element={<P><GoalIntro /></P>} />
+          <Route path="/goals/step1" element={<P><GoalStep1 /></P>} />
+          <Route path="/goals/step2" element={<P><GoalStep2 /></P>} />
+          <Route path="/goals/step3" element={<P><GoalStep3 /></P>} />
+          <Route path="/goals/step4" element={<P><GoalStep4 /></P>} />
+          <Route path="/goals/step5" element={<P><GoalStep5 /></P>} />
+          <Route path="/goals/result" element={<P><GoalResult /></P>} />
 
           {/* AI Co-Pilot */}
-          <Route path="/copilot" element={<CopilotIntro />} />
-          <Route path="/copilot/dashboard" element={<CopilotDashboard />} />
+          <Route path="/copilot" element={<P><CopilotIntro /></P>} />
+          <Route path="/copilot/dashboard" element={<P><CopilotDashboard /></P>} />
 
           {/* Profile & Settings */}
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/help" element={<Help />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/notifications/popup" element={<NotificationPopup />} />
+          <Route path="/profile" element={<P><Profile /></P>} />
+          <Route path="/settings" element={<P><Settings /></P>} />
+          <Route path="/help" element={<P><Help /></P>} />
+          <Route path="/notifications" element={<P><Notifications /></P>} />
+          <Route path="/notifications/popup" element={<P><NotificationPopup /></P>} />
 
-          {/* Error Pages */}
+          {/* Error Pages (public) */}
           <Route path="/error/500" element={<Error500 />} />
           <Route path="/error/network" element={<NetworkError />} />
           <Route path="*" element={<Error404 />} />
@@ -157,6 +231,7 @@ function App() {
       </Suspense>
     </BrowserRouter>
     </UserDataProvider>
+    </ErrorBoundary>
   );
 }
 

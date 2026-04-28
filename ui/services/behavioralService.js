@@ -1,9 +1,11 @@
 /**
  * Behavioral Assessment Service
- * Handles scoring of behavioral answers via Gemini API
+ * ==============================
+ * Handles scoring of behavioral answers via Gemini API.
+ * Uses the centralized apiClient for auto-auth token injection.
  */
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+import { API_BASE_URL } from '../utils/config';
 
 /**
  * Submit all 10 behavioral answers to backend for Gemini scoring
@@ -12,53 +14,79 @@ const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
  * @returns {Promise<Object>} - Numerical scores for all 10 dimensions
  */
 export async function scoreBehavioralAnswers(answers, authToken) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/predict/behavioral-scores`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`
-      },
-      body: JSON.stringify({ answers }),
-    });
+  // Retry logic with exponential backoff
+  const maxRetries = 3;
+  let lastError = null;
 
-    if (!response.ok) {
-      const error = await response.json();
-      throw new Error(error.detail || 'Failed to score answers');
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
+      const response = await fetch(`${API_BASE_URL}/predict/behavioral-scores`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify({ answers }),
+        signal: controller.signal
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        const error = await response.json().catch(() => ({ detail: 'Unknown error' }));
+        throw new Error(error.detail || `Server error: ${response.status}`);
+      }
+
+      const scores = await response.json();
+      return scores;
+    } catch (error) {
+      lastError = error;
+      console.warn(`Backend attempt ${attempt + 1}/${maxRetries} failed:`, error.message);
+      
+      // Don't retry on abort (timeout) or if it's the last attempt
+      if (error.name === 'AbortError' || attempt === maxRetries - 1) {
+        break;
+      }
+      
+      // Wait before retrying (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
     }
-
-    const scores = await response.json();
-    return scores;
-  } catch (error) {
-    console.warn('Backend unavailable, using local scoring fallback:', error.message);
-    
-    // Fallback: generate scores locally when backend is unreachable
-    return generateFallbackScores(answers);
   }
+
+  console.warn('All backend attempts failed, using local scoring fallback');
+  
+  // Fallback: generate scores locally when backend is unreachable
+  return generateFallbackScores(answers);
 }
 
 /**
  * Generate fallback behavioral scores when the backend API is unavailable.
- * Uses a simple heuristic based on answer text length and content patterns.
+ * Uses deterministic heuristics based on answer text characteristics.
+ * NO randomness — ensures consistent scores for the same answers.
  */
 function generateFallbackScores(answers) {
   const scoreAnswer = (text) => {
     if (!text || text.length < 5) return 4;
+    if (text.length > 120) return 8;
     if (text.length > 80) return 7;
-    return 5 + Math.floor(Math.random() * 2);
+    if (text.length > 40) return 6;
+    return 5;
   };
   
   return {
-    payday: scoreAnswer(answers.payday),
-    weekend: scoreAnswer(answers.weekend),
-    subs: scoreAnswer(answers.subs),
-    impulse: scoreAnswer(answers.impulse),
-    goal: scoreAnswer(answers.goal),
-    stress: scoreAnswer(answers.stress),
-    social: scoreAnswer(answers.social),
-    emergency: scoreAnswer(answers.emergency),
-    future: scoreAnswer(answers.future),
-    learning: scoreAnswer(answers.learning),
+    payday_behavior_score: scoreAnswer(answers.payday),
+    weekend_spending_score: scoreAnswer(answers.weekend),
+    subscription_awareness_score: scoreAnswer(answers.subs),
+    impulse_control_score: scoreAnswer(answers.impulse),
+    goal_history_score: scoreAnswer(answers.goal),
+    stress_spending_score: scoreAnswer(answers.stress),
+    social_comparison_score: scoreAnswer(answers.social),
+    emergency_preparedness_score: scoreAnswer(answers.emergency),
+    future_planning_score: scoreAnswer(answers.future),
+    financial_literacy_score: scoreAnswer(answers.learning),
   };
 }
 /**

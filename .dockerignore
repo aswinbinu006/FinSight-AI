@@ -1,0 +1,46 @@
+# ── Frontend & JS ──
+node_modules/
+dist/
+dist-ssr/
+
+# ── Python ──
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# ── Secrets ──
+.env
+.env.*
+.firebaserc
+
+# ── IDE & OS ──
+.vscode/
+.idea/
+.git/
+.DS_Store
+*.log
+
+# ── Docs & Misc ──
+docs/
+*.md
+audit_dump.txt
+FIXES_APPLIED.md
+DEPLOYMENT_FIX_GUIDE.md
+QUICK_FIX_REFERENCE.md
+
+# ── UI Source (not needed by backend) ──
+ui/
+public/
+index.html
+eslint.config.js
+vite.config.js
+package*.json
+firebase.json
+firebase_env/
+
+# ── Test & data gen (not needed in production container) ──
+src/finsight_models_production/generate_datasets.py
+src/finsight_models_production/test_and_validate.py
+src/finsight_models_production/INTEGRATION_GUIDE.txt
+src/test_everything.py
