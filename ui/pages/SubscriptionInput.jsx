@@ -18,7 +18,7 @@ import {
 
 export default function SubscriptionInput() {
   const navigate = useNavigate();
-  const { userData, updateUserData } = useUserData();
+  const { userData, updateUserDataBatch } = useUserData();
   const [subscriptions, setSubscriptions] = useState(userData.waste.subscriptions || []);
 
   const [newName, setNewName] = useState('');
