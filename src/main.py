@@ -39,7 +39,8 @@ except ImportError:
 # --- ML Models ---
 from finsight_models_production import (
     HealthModel, WasteModel, GoalModel, ClusterModel,
-    score_behavioral_answers, explain_health, explain_waste, explain_goal
+    score_behavioral_answers, explain_health, explain_waste, explain_goal,
+    chat_with_copilot
 )
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -229,6 +230,11 @@ class BehavioralScoringRequest(BaseModel):
         if missing:
             raise ValueError(f"Missing answers: {', '.join(missing)}")
         return v
+
+
+class CopilotChatRequest(BaseModel):
+    message: str
+    context: dict = Field(default_factory=dict)
 
 
 # ═══════════════════════════════════════════════════════════════════════
@@ -451,6 +457,20 @@ async def get_behavioral_scores(
     except Exception as e:
         logger.error(f"Behavioral scoring error: {e}")
         raise HTTPException(500, f"Scoring failed: {str(e)}")
+
+
+@app.post("/chat/copilot")
+async def copilot_chat(
+    req: CopilotChatRequest,
+    user: dict = Depends(get_current_user_strict),
+):
+    """Deep financial intelligence chat using Gemini AI."""
+    try:
+        response = chat_with_copilot(req.message, req.context)
+        return {"response": response}
+    except Exception as e:
+        logger.error(f"Copilot chat error: {e}")
+        raise HTTPException(500, f"AI Co-Pilot is temporarily unavailable: {str(e)}")
 
 
 # ═══════════════════════════════════════════════════════════════════════

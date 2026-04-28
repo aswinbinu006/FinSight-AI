@@ -4,27 +4,26 @@ import { Brain, Sparkles, Send, MoreVertical, ShieldCheck, Zap, TrendingUp, Aler
 import { motion as Motion } from 'framer-motion';
 import { formatINR } from '../utils';
 import { useUserData } from '../context/UserDataContext';
+import { chatWithCopilot } from '../services/copilotService';
 
 export default function CopilotDashboard() {
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef(null);
-  const { userData, loading } = useUserData();
+  const { userData, loading, authUser } = useUserData();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // Derive metrics from centralized context (Firestore-backed)
-  const metrics = {
-    healthScore: userData?.health?.score || 0,
-    targetAmount: userData?.goal?.target || 0,
-    monthlySavings: userData?.goal?.monthlySavings || 0,
-    wasteAmount: userData?.waste?.totalWaste || 0,
-    income: userData?.financial?.income || 0,
-    behavioralCompleted: userData?.behavioral?.completed,
-    goalActive: userData?.goal?.active,
-  };
+  const subscriptions = userData?.waste?.subscriptions || [];
+  const processedSubs = subscriptions.map(sub => {
+    const monthlyCost = (sub.cycle === 'Yearly' || sub.cycle === 'Annual') ? sub.cost / 12 : sub.cost;
+    const isWaste = sub.usage ? (sub.usage === 'Rarely' || sub.usage === 'Never') : (sub.cost > 500); 
+    return { ...sub, monthlyCost, isWaste };
+  });
+  const wasteSubs = processedSubs.filter(sub => sub.isWaste);
+  const wasteTotal = Math.round(wasteSubs.reduce((acc, sub) => acc + sub.monthlyCost, 0));
 
   const [messages, setMessages] = useState([
     { type: 'bot', text: "Hello! I am your FinSight Co-Pilot. I have full access to your health, goals, and waste models. Ask me anything about your current financial trajectory, and I'll explain it in plain English.", time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }
@@ -46,7 +45,7 @@ export default function CopilotDashboard() {
     );
   }
 
-  const handleSend = (overrideText = null) => {
+  const handleSend = async (overrideText = null) => {
       const textToProcess = overrideText || inputText;
       if (!textToProcess.trim()) return;
 
@@ -55,34 +54,39 @@ export default function CopilotDashboard() {
       setInputText("");
       setIsTyping(true);
 
-      // Semantic Heuristic Engine (Dynamic logic)
-      setTimeout(() => {
-          let replyText = "I see. Based on your current profile models, taking action on this will stabilize your long-term capital trajectory.";
-          const lowerTxt = textToProcess.toLowerCase();
+      try {
+          const idToken = await authUser.getIdToken();
+          
+          // Construct rich context for Gemini
+          const chatContext = {
+              health: userData.health,
+              waste: {
+                  ...userData.waste,
+                  total_monthly_waste: wasteTotal,
+                  flagged_subscriptions: wasteSubs
+              },
+              goal: userData.goal,
+              behavioral_scores: userData.behavioral.scores,
+              financial: userData.financial
+          };
 
-          if (lowerTxt.includes("goal") || lowerTxt.includes("target")) {
-              if (metrics.targetAmount > 0) {
-                  replyText = `Your current primary goal is set to ₹${formatINR(metrics.targetAmount)}. With your current monthly saving of ₹${formatINR(metrics.monthlySavings)}, the AI model calculates you need consistency to hit the deadline. Would you like me to simulate increasing that monthly saving by 10%?`;
-              } else {
-                  replyText = "You haven't initialized a Goal trajectory yet. You can build a saving goal in the Goals module, and I'll analyze the exact math needed to get you there.";
-              }
-          } else if (lowerTxt.includes("health") || lowerTxt.includes("score")) {
-              if (metrics.healthScore > 75) {
-                  replyText = `The Health model gave you a score of ${metrics.healthScore}/100. That is excellent. It means your behavioral spending patterns and emergency safety nets are highly optimized against sudden market shocks.`;
-              } else {
-                  replyText = `Your current health score from the core model is ${metrics.healthScore}/100. The primary reason for this percentage is high outgoing liquidity compared to asset accumulation. We need to cut unnecessary expenses to raise it.`;
-              }
-          } else if (lowerTxt.includes("waste") || lowerTxt.includes("cut") || lowerTxt.includes("expense") || lowerTxt.includes("subscription")) {
-              if (metrics.wasteAmount > 0) {
-                  replyText = `The Waste model has identified ₹${formatINR(metrics.wasteAmount)} in annual leakage across your subscriptions. By cutting these, that excess capital doesn't disappear—it gets automatically rerouted directly into funding your savings goal.`;
-              } else {
-                  replyText = `I don't see any critical subscription waste in your current profile. Your outgoing commitments look lean and optimized.`;
-              }
-          }
+          const replyText = await chatWithCopilot(textToProcess, chatContext, idToken);
 
-          setMessages(prev => [...prev, { type: 'bot', text: replyText, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) }]);
+          setMessages(prev => [...prev, { 
+              type: 'bot', 
+              text: replyText, 
+              time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) 
+          }]);
+      } catch (err) {
+          console.error("Co-Pilot Chat Error:", err);
+          setMessages(prev => [...prev, { 
+              type: 'bot', 
+              text: "I'm having trouble connecting to my neural core right now. Please check your connection or try again in a moment.", 
+              time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) 
+          }]);
+      } finally {
           setIsTyping(false);
-      }, 1500);
+      }
   };
 
 
@@ -108,8 +112,8 @@ export default function CopilotDashboard() {
 
         <div className="grid grid-cols-12 gap-8 lg:gap-12">
             {/* Analytics Sidebar for Context */}
-            <div className="col-span-12 lg:col-span-8 space-y-10">
-                {userData.waste?.subscriptions?.some(s => s.isWaste) ? (
+            <div className="col-span-12 lg:col-span-7 space-y-10">
+                {wasteSubs.length > 0 ? (
                 <section className="bg-[#0A0A0A] border border-primary/20 rounded-[2.5rem] p-8 lg:p-12 relative overflow-hidden group shadow-2xl">
                     <div className="relative z-10 space-y-6">
                         <div className="flex items-center gap-2 text-primary">
@@ -120,7 +124,7 @@ export default function CopilotDashboard() {
                             Subscription waste is directly hurting your <span className="text-primary italic">savings goals.</span>
                         </h2>
                         <p className="text-white/40 text-[11px] lg:text-xs max-w-xl font-medium leading-relaxed uppercase tracking-widest">
-                            Executing recovery protocol on flagged nodes will increase liquidity by <span className="text-white font-black italic">₹{formatINR(userData.waste.totalWaste)}/month</span>.
+                            Executing recovery protocol on flagged nodes will increase liquidity by <span className="text-white font-black italic">₹{formatINR(wasteTotal)}/month</span>.
                         </p>
                     </div>
                     <div className="absolute -right-20 -top-20 w-[300px] h-[300px] bg-primary/5 rounded-full blur-[80px]" />
@@ -193,7 +197,7 @@ export default function CopilotDashboard() {
             </div>
 
             {/* AI Co-Pilot Chat Interface */}
-            <div className="col-span-12 lg:col-span-4 sticky top-10 self-start h-[calc(100vh-10rem)]">
+            <div className="col-span-12 lg:col-span-5 sticky top-10 self-start h-[calc(100vh-10rem)]">
                 <div className="bg-[#0A0A0A] border border-white/10 rounded-[2.5rem] h-full flex flex-col overflow-hidden shadow-2xl">
                     {/* Chat Header */}
                     <div className="p-6 lg:p-8 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
